@@ -1,6 +1,16 @@
-module.exports.index = (req, res) => {
+const Product = require('../../models/product.model.js')
+
+module.exports.index = async (req, res) => {
+    const products = await Product.find({});
+
+    const newProducts = products.map(item => {
+        item.priceNew = ((item.price * (100 - item.discountPercentage)) / 100).toFixed(0);
+        return item
+    });
+    
     res.render("./client/pages/products/index.pug", {
-        pageTitle: 'Danh sách sản phẩm'
+        pageTitle: 'Danh sách sản phẩm',
+        products: newProducts
     });
 }
 

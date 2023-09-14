@@ -5,6 +5,7 @@ const database = require('./config/database')
 database.connect()
 
 const route = require("./routes/client/index.route")
+const routeAdmin = require('./routes/admin/index.route.js')
 
 const app = express();
 const port = process.env.PORT;
@@ -16,6 +17,7 @@ app.use(express.static("public"));
 
 // Routes
 route(app);
+routeAdmin(app);
 
 app.listen(port, () => {
     console.log(`App listening on http://127.0.0.1:${port}`)

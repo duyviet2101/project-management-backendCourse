@@ -1,6 +1,8 @@
 const Product = require('../../models/product.model.js')
+
 const filterStatusHelper = require('../../helpers/filterStatus.js');
 const searchHelper = require('../../helpers/search.js')
+const paginationHelper = require('../../helpers/pagination.js') 
 
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
@@ -14,21 +16,35 @@ module.exports.index = async (req, res) => {
         deleted: false,
     };
 
+    //! status
     if (req.query.status) {
         find.status = req.query.status;
-    }
+    };
     
+    //! search
     if (req.query.keyword) {
         find.title = objectSearch.regex;
-    }
+    };
 
-    const products = await Product.find(find);
+    //! Pagination
+    let initPagination = {
+        currentPage: 1,
+        limitItems: 4
+    };
+    const countProduct = await Product.count(find);
+    const objectPagination = paginationHelper(initPagination, req.query, countProduct);
+
+    //! end pagination
+    const products = await Product.find(find)
+        .limit(objectPagination.limitItems)
+        .skip(objectPagination.skip);
     
     res.render("./admin/pages/products/index.pug", {
         pageTitle: 'Danh sách sản phẩm',
         products: products,
         filterStatus: filterStatus,
-        keyword: objectSearch.keyword
+        keyword: objectSearch.keyword,
+        pagination: objectPagination
     });
 }
 

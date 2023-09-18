@@ -1,4 +1,4 @@
-// button status
+//! button status
 const buttonsStatus = document.querySelectorAll('[button-status]')
 if (buttonsStatus.length > 0) {
     let url = new URL(window.location.href);
@@ -17,10 +17,10 @@ if (buttonsStatus.length > 0) {
         });
     })
 }
-// end button status
+//! end button status
 
 
-// search form
+//! search form
 
 const formSearch = document.querySelector('#form-search')
 if (formSearch) {
@@ -40,7 +40,7 @@ if (formSearch) {
     })
 }
 
-// end search form
+//! end search form
 
 //!pagination
 
@@ -60,3 +60,26 @@ if (buttonsPagination.length > 0) {
 }
 
 //!end pagination
+
+//! change status
+
+const buttonsChangeStatus = document.querySelectorAll('[button-change-status]');
+if (buttonsChangeStatus) {
+    const formChangeStatus = document.querySelector('#form-change-status');
+    const path = formChangeStatus.getAttribute('data-path');
+
+    buttonsChangeStatus.forEach(button => {
+        button.addEventListener("click", () => {
+            const statusCurrent = button.getAttribute('data-status');
+            const id = button.getAttribute('data-id');
+            
+            const statusChange = statusCurrent == "active" ? "inactive" : "active";
+
+            const action = path + `/${statusChange}/${id}` + '?_method=PATCH';
+            formChangeStatus.action = action;
+            formChangeStatus.submit();
+        })
+    })
+}
+
+//! end change status

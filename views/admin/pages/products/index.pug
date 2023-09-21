@@ -79,6 +79,12 @@ block main
                   button-delete
                   data-id= item.id
                 ) Xóa
+          else 
+            tr 
+              td(
+                colspan="7"
+                class="text-center"
+              ) Không tìm thấy sản phẩm nào!
   form(
     id="form-change-status"
     method="POST"

@@ -83,3 +83,75 @@ if (buttonsChangeStatus) {
 }
 
 //! end change status
+
+
+//! check box multi
+
+const checkboxMulti = document.querySelector('[checkbox-multi]');
+if (checkboxMulti) {
+    const inputCheckAll = checkboxMulti.querySelector("input[name='checkall']");
+    const inputsId = checkboxMulti.querySelectorAll("input[name='id']");
+
+    inputCheckAll.addEventListener("click", () => {
+        inputsId.forEach(input => {
+            input.checked = inputCheckAll.checked;
+        });
+    });
+
+    inputsId.forEach(input => {
+        input.addEventListener("click", () => {
+            const countChecked = checkboxMulti.querySelectorAll(
+                "input[name='id']:checked"
+            ).length;
+            
+            if (countChecked == inputsId.length) {
+                inputCheckAll.checked = true;
+            } else {
+                inputCheckAll.checked = false;
+            }
+        });
+    });
+
+
+    //*click vào dòng thfi tự động tick ô checkbox
+    // const rows = checkboxMulti.querySelectorAll("tbody>tr");
+    // rows.forEach(row => {
+    //     const clickZone
+    //     row.addEventListener('click', () => {
+    //         const inputCheckbox = row.querySelector("input[name='id']");
+    //         console.log(inputCheckbox)
+    //     })
+    // })
+}
+
+//! end check box multi
+
+
+//! form change multi
+
+const formChangeMulti = document.querySelector("[form-change-multi]");
+if (formChangeMulti) {
+    formChangeMulti.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const inputsChecked = checkboxMulti.querySelectorAll("input[name='id']:checked");
+
+        if (inputsChecked.length > 0) {
+            let ids = [];
+            const inputIds = formChangeMulti.querySelector("input[name='ids']");
+
+
+            inputsChecked.forEach(input => {
+                ids.push(input.value);
+            });
+
+            inputIds.value = ids.join(", ");
+
+            formChangeMulti.submit();
+        } else {
+            alert("Chọn ít nhất một bản ghi");
+        }
+    })
+}
+
+//! end form change multi

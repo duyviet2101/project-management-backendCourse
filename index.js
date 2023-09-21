@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require("express");
 const methodOverride = require('method-override');
 const database = require('./config/database')
+const bodyPraser = require('body-parser')
+
 
 database.connect()
 
@@ -25,6 +27,8 @@ app.use(express.static("public"));
 //! define app local vars
 app.locals.prefixAdmin = systemConfig.prefixAdmin
 
+//! config ulr encoded
+app.use(bodyPraser.urlencoded({extended: true}))
 
 // Routes
 route(app);

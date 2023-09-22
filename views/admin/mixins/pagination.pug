@@ -49,7 +49,7 @@ mixin pagination(pagination)
             button-pagination= pagination.currentPage + 1
           ) Trang sau
 
-      if (pagination.currentPage != pagination.totalPage)
+      if (pagination.totalPage > 0 && pagination.currentPage != pagination.totalPage)
         li(class="page-item")
           button(
             class="page-link"

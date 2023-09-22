@@ -29,7 +29,7 @@ if (formSearch) {
     formSearch.addEventListener("submit", (e) => {
         e.preventDefault();
         const value = e.target.elements.keyword.value;
-        
+
         if (value != "") {
             url.searchParams.set("keyword", value);
         } else {
@@ -51,7 +51,7 @@ if (buttonsPagination.length > 0) {
     buttonsPagination.forEach(button => {
         button.addEventListener('click', () => {
             const page = button.getAttribute('button-pagination');
-            
+
             url.searchParams.set('page', page);
 
             window.location.href = url.href;
@@ -64,7 +64,7 @@ if (buttonsPagination.length > 0) {
 //! change status
 
 const buttonsChangeStatus = document.querySelectorAll('[button-change-status]');
-if (buttonsChangeStatus) {
+if (buttonsChangeStatus.length > 0) {
     const formChangeStatus = document.querySelector('#form-change-status');
     const path = formChangeStatus.getAttribute('data-path');
 
@@ -72,7 +72,7 @@ if (buttonsChangeStatus) {
         button.addEventListener("click", () => {
             const statusCurrent = button.getAttribute('data-status');
             const id = button.getAttribute('data-id');
-            
+
             const statusChange = statusCurrent == "active" ? "inactive" : "active";
 
             const action = path + `/${statusChange}/${id}` + '?_method=PATCH';
@@ -103,7 +103,7 @@ if (checkboxMulti) {
             const countChecked = checkboxMulti.querySelectorAll(
                 "input[name='id']:checked"
             ).length;
-            
+
             if (countChecked == inputsId.length) {
                 inputCheckAll.checked = true;
             } else {
@@ -175,14 +175,14 @@ if (formChangeMulti) {
 //! delete one
 
 const buttonsDelete = document.querySelectorAll('[button-delete]');
-if (buttonsDelete) {
+if (buttonsDelete.length > 0) {
     const formDeleteItem = document.querySelector('#form-delete-item');
     const path = formDeleteItem.getAttribute('data-path');
 
     buttonsDelete.forEach(button => {
         button.addEventListener("click", () => {
             const confirmDelete = confirm("Bạn có chắc muốn xoá bản ghi này không ?");
-            
+
             if (confirmDelete) {
                 const id = button.getAttribute('data-id');
                 const action = path + `/${id}` + '?_method=DELETE';
@@ -213,3 +213,87 @@ if (showAlert) {
 }
 
 //! end show alert
+
+//! sharp delete one
+
+const buttonsSharpDelete = document.querySelectorAll('[button-sharp-delete]');
+if (buttonsSharpDelete.length > 0) {
+    const formSharpDeleteItem = document.querySelector('#form-sharp-delete-item');
+    const path = formSharpDeleteItem.getAttribute('data-path');
+
+    buttonsSharpDelete.forEach(button => {
+        button.addEventListener("click", () => {
+            const confirmDelete = confirm("Bạn có chắc muốn xoá vĩnh viễn bản ghi này không ?");
+
+            if (confirmDelete) {
+                const id = button.getAttribute('data-id');
+                const action = path + `/${id}` + '?_method=DELETE';
+                formSharpDeleteItem.action = action;
+                console.log(action)
+                formSharpDeleteItem.submit();
+            }
+        })
+    })
+}
+
+//! end sharp delete one
+
+//! restore one
+
+const buttonsRestore = document.querySelectorAll('[button-restore]');
+if (buttonsRestore.length > 0) {
+    const formRestoreItem = document.querySelector('#form-restore-item');
+    const path = formRestoreItem.getAttribute('data-path');
+
+    buttonsRestore.forEach(button => {
+        button.addEventListener("click", () => {
+            const id = button.getAttribute('data-id');
+            const action = path + `/${id}` + '?_method=PATCH';
+            formRestoreItem.action = action;
+            console.log(action)
+            formRestoreItem.submit();
+        })
+    })
+}
+
+//! end restore one
+
+
+//! trash form change multi
+
+const formTrashChangeMulti = document.querySelector("[form-trash-change-multi]");
+if (formTrashChangeMulti) {
+    formTrashChangeMulti.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const inputsChecked = checkboxMulti.querySelectorAll("input[name='id']:checked");
+
+        const typeChange = e.target.elements.type.value;
+
+        //*confirm hard-delete-all
+        if (typeChange == 'sharp-delete-all') {
+            const isConfirm = confirm('Bạn có chắc muốn xoá vĩnh viễn những bản ghi này không ?');
+            if (!isConfirm) {
+                return;
+            }
+        }
+
+        if (inputsChecked.length > 0) {
+            let ids = [];
+            const inputIds = formTrashChangeMulti.querySelector("input[name='ids']");
+
+            inputsChecked.forEach(input => {
+                const id = input.value;
+                ids.push(id);
+            });
+
+            inputIds.value = ids.join(", ");
+
+            console.log(ids)
+            formTrashChangeMulti.submit();
+        } else {
+            alert("Chọn ít nhất một bản ghi");
+        }
+    })
+}
+
+//! end trash form change multi

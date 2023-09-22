@@ -8,18 +8,12 @@ include ../../mixins/alert.pug
 block main
   +alert-success(5000)
 
-  h1(class="mb-4") Danh sách sản phẩm
+  h1(class="mb-4") Danh sách sản phẩm đã xoá
 
   .card.mb-3
-    .card-header Bộ lọc và Tìm kiếm
+    .card-header Tìm kiếm
     .card-body
       .row 
-        .col-6
-          +filter-status(filterStatus)
-          a(
-              class=`btn btn-sm ml-1 btn-outline-danger trash`
-              href='/admin/products/trash'
-            ) Thùng rác
         .col-6
           +search(keyword)
 
@@ -28,7 +22,25 @@ block main
     .card-header Danh sách
     .card-body
       
-      +change-multi(`/${prefixAdmin}/products/change-multi?_method=PATCH`)
+      form(
+          action=`/${prefixAdmin}/products/trash/change-multi?_method=PATCH`
+          method="POST"
+          form-trash-change-multi
+        ) 
+          .d-flex.align-items-start
+            .form-group
+              select(name="type" class="form-control")
+                option(selected) ___Chọn hành động___
+                option(value="restore-all") Khôi phục tất cả
+                option(value="sharp-delete-all") Xoá tất cả
+            .form-group
+              input(
+                type="text"
+                name="ids"
+                value=""
+                class="form-control d-none"
+              )
+            button(type="submit" class="btn btn-primary") Áp dụng
 
       table(
         class= "table table-hover table-sm"
@@ -67,36 +79,27 @@ block main
                 )
               td= item.title
               td #{item.price}$
-              td 
-                input(
-                  type="number"
-                  value=item.position 
-                  style="width: 60px"
-                  min="1"
-                  name="position"
-                )
+              td #{item.position}
               td
                 if (item.status == "active")
-                  button(
+                  span(
                     class="badge badge-success"
-                    button-change-status
-                    data-status= item.status
-                    data-id= item.id
                   ) Hoạt động 
                 else 
-                  button(
+                  span(
                     class="badge badge-danger"
-                    button-change-status
-                    data-status= item.status
-                    data-id= item.id
                   ) Dừng hoạt động
               td
-                button(class="btn btn-warning btn-sm") Sửa
+                button(
+                  class="btn btn-primary btn-sm"
+                  button-restore
+                  data-id= item.id
+                ) Khôi phục
                 button(
                   class="btn btn-danger btn-sm ml-1"
-                  button-delete
+                  button-sharp-delete
                   data-id= item.id
-                ) Xóa
+                ) Xóa vĩnh viễn
           else 
             tr 
               td(
@@ -104,16 +107,16 @@ block main
                 class="text-center"
               ) Không tìm thấy sản phẩm nào!
   form(
-    id="form-change-status"
+    id="form-sharp-delete-item"
     method="POST"
     action=""
-    data-path=`/${prefixAdmin}/products/change-status`
+    data-path=`/${prefixAdmin}/products/trash/sharp-delete`
   )
   form(
-    id="form-delete-item"
+    id="form-restore-item"
     method="POST"
     action=""
-    data-path=`/${prefixAdmin}/products/delete`
+    data-path=`/${prefixAdmin}/products/trash/restore`
   )
 
   +pagination(pagination)

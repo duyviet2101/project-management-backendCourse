@@ -3,7 +3,9 @@ const express = require("express");
 const methodOverride = require('method-override');
 const database = require('./config/database')
 const bodyPraser = require('body-parser')
-
+const flash = require('express-flash')
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
 
 database.connect()
 
@@ -23,6 +25,11 @@ app.use(methodOverride('_method'))
 
 //! config static file
 app.use(express.static("public"));
+
+//! config express flash
+app.use(cookieParser('...'));
+app.use(session({ cookie: { maxAge: 60000 }}));
+app.use(flash());
 
 //! define app local vars
 app.locals.prefixAdmin = systemConfig.prefixAdmin

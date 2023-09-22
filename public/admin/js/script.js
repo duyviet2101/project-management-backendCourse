@@ -111,6 +111,15 @@ if (checkboxMulti) {
             }
         });
     });
+
+    //*nếu click vào ảnh thì cũng tick vào checkbox
+    const imgProducts = checkboxMulti.querySelectorAll("img[img-product]");
+    imgProducts.forEach(img => {
+        img.addEventListener("click", () => {
+            const checkbox = img.closest("tr").querySelector("input[name='id']");
+            checkbox.click();
+        })
+    })
 }
 
 //! end check box multi

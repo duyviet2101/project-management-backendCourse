@@ -111,17 +111,6 @@ if (checkboxMulti) {
             }
         });
     });
-
-
-    //*click vào dòng thfi tự động tick ô checkbox
-    // const rows = checkboxMulti.querySelectorAll("tbody>tr");
-    // rows.forEach(row => {
-    //     const clickZone
-    //     row.addEventListener('click', () => {
-    //         const inputCheckbox = row.querySelector("input[name='id']");
-    //         console.log(inputCheckbox)
-    //     })
-    // })
 }
 
 //! end check box multi
@@ -136,10 +125,20 @@ if (formChangeMulti) {
 
         const inputsChecked = checkboxMulti.querySelectorAll("input[name='id']:checked");
 
+        const typeChange = e.target.elements.type.value;
+
+        //*confirm delete-all
+        if (typeChange == 'delete-all') {
+            const isConfirm = confirm('Bạn có chắc muốn xoá những bản ghi này không ?')
+
+            if (!isConfirm) {
+                return;
+            }
+        }
+
         if (inputsChecked.length > 0) {
             let ids = [];
             const inputIds = formChangeMulti.querySelector("input[name='ids']");
-
 
             inputsChecked.forEach(input => {
                 ids.push(input.value);

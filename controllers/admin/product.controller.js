@@ -41,7 +41,7 @@ module.exports.index = async (req, res) => {
         .skip(objectPagination.skip)
         .sort({position: 'desc'});
     
-    if (products.length > 0) {
+    if (products.length > 0 || countProduct == 0) {
         res.render("./admin/pages/products/index.pug", {
             pageTitle: 'Danh sách sản phẩm',
             products: products,
@@ -114,4 +114,26 @@ module.exports.deleteItem = async (req, res) => {
     });
     req.flash('success', `Xoá sản phẩm thành công!`)
     res.redirect('back')
+}
+
+// [GET] /admin/products/create
+module.exports.create = async (req, res) => {
+    res.render('admin/pages/products/create', {
+        pageTitle: 'Tạo mới sản phẩm'
+    });
+}
+
+// [POST] /admin/products/create
+module.exports.createPost = async (req, res) => {
+    const countProduct = await Product.countDocuments();
+
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
+    req.body.position = req.body.position ? parseInt(req.body.position) : countProduct + 1;
+    
+    const product = new Product(req.body);
+    await product.save();
+
+    res.redirect(`/${systemConfig.prefixAdmin}/products`);
 }

@@ -5,7 +5,7 @@ module.exports.createPost = (req, res, next) => {
         return
     }
 
-    if (!req.body.title.length < 5) {
+    if (req.body.title.length < 5) {
         req.flash("error", `Tiêu đề dài tối thiểu 5 kí tự!`)
         res.redirect('back')
         return

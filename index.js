@@ -17,14 +17,14 @@ const routeAdmin = require('./routes/admin/index.route.js')
 const app = express();
 const port = process.env.PORT;
 //! config view
-app.set("views", "./views");
+app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
 
 //! config method override
 app.use(methodOverride('_method'))
 
 //! config static file
-app.use(express.static("public"));
+app.use(express.static(`${__dirname}/public`));
 
 //! config express flash
 app.use(cookieParser('...'));

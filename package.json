@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --inspect index.js",
+    "start": "node index.js",
+    "dev": "nodemon --inspect index.js",
+    "watch": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cloudinary": "^1.41.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -19,8 +22,10 @@
     "mongodb": "^6.1.0",
     "mongoose": "^7.5.1",
     "mongoose-slug-updater": "^3.3.0",
+    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "pug": "^3.0.2"
+    "pug": "^3.0.2",
+    "streamifier": "^0.1.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

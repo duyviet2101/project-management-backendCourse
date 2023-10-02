@@ -6,6 +6,7 @@ const bodyPraser = require('body-parser')
 const flash = require('express-flash')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
+const morgan = require('morgan')
 
 database.connect()
 
@@ -16,6 +17,9 @@ const routeAdmin = require('./routes/admin/index.route.js')
 
 const app = express();
 const port = process.env.PORT;
+//! config morgan
+app.use(morgan('dev'));
+
 //! config view
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");

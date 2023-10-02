@@ -29,6 +29,8 @@ module.exports.detail = async (req, res) => {
             deleted: false,
             status: "active"
         })
+        if (!product)
+            return res.redirect('back')
         // console.log(product)
         res.render("client/pages/products/detail", {
             pageTitle: 'Chi tiết sản phẩm',

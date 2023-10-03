@@ -7,6 +7,7 @@ const flash = require('express-flash')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const morgan = require('morgan')
+const path = require('path')
 
 database.connect()
 
@@ -17,6 +18,9 @@ const routeAdmin = require('./routes/admin/index.route.js')
 
 const app = express();
 const port = process.env.PORT;
+//!config tinymce
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
+
 //! config morgan
 app.use(morgan('dev'));
 

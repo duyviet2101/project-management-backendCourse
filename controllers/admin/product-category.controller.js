@@ -26,12 +26,11 @@ module.exports.create = async (req, res) => {
 
 
     //! check this
-
     const records = await ProductCategory.find(find)
 
     const newRecords = createTree(records)
 
-    res.render('admin/pages/products-category/create', {
+    res.render(`${prefixAdmin}/pages/products-category/create`, {
         pageTitle: 'Tạo danh mục sản phẩm',
         records: newRecords
     })
@@ -49,5 +48,39 @@ module.exports.createPost = async (req, res) => {
     const produtCategory = new ProductCategory(req.body);
     await produtCategory.save()
 
+    res.redirect(`/${prefixAdmin}/products-category`)
+}
+
+
+// GET /admin/products-category/edit/:id
+module.exports.edit = async (req, res) => {
+    const id = req.params.id
+
+    const data = await ProductCategory.findOne({
+        _id: id,
+        deleted: false
+    })
+    const records = await ProductCategory.find({
+        deleted: false
+    })
+
+    const newRecords = createTree(records)
+
+    res.render(`${prefixAdmin}/pages/products-category/edit`,{
+        data,
+        records: newRecords
+    })
+}
+
+
+// PATCh /admin/products-category/edit/:id
+module.exports.editPatch = async (req, res) => {
+    const id = req.params.id
+
+    req.body.position = parseInt(req.body.position);
+
+    await ProductCategory.updateOne({
+        _id: id
+    }, req.body)
     res.redirect(`/${prefixAdmin}/products-category`)
 }

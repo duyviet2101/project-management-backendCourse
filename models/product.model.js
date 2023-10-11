@@ -31,6 +31,10 @@ const productSchema = new mongoose.Schema({
       type: Date,
       default: Date.now()
     },
+  },
+  deletedBy: {
+    account_id: String,
+    deletedAt: Date
   }
 }, {
   timestamps: true

@@ -8,15 +8,16 @@ html
     link(rel="stylesheet", href="/admin/css/style.css")
 
   body
+    if (role.permissions.length > 0)
     
-    include ../partials/header.pug
+      include ../partials/header.pug
 
-    .body
-    
-      include ../partials/sider.pug
+      .body
+      
+        include ../partials/sider.pug
 
-      .main
-        block main
+        .main
+          block main
             
 
     script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js") 

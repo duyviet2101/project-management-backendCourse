@@ -60,6 +60,8 @@ block main
               th Giá
               th Vị trí
               th Trạng thái
+              th Người tạo
+              th Người cập nhật
               th Hành động
 
           tbody
@@ -111,6 +113,11 @@ block main
                     div #{item.createdBy.accountFullName}
                     div 
                       +formatDate(item.createdBy.createdAt)
+                td 
+                  if (item.updatedBy.length > 0)
+                    div #{item.updatedBy.slice(-1)[0].accountFullName}
+                    div 
+                      +formatDate(item.updatedBy.slice(-1)[0].updatedAt)
                 td
                   a(
                     class="btn btn-secondary btn-sm"

@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const morgan = require('morgan')
 const path = require('path')
+const moment = require('moment')
 
 database.connect()
 
@@ -41,6 +42,7 @@ app.use(flash());
 
 //! define app local vars
 app.locals.prefixAdmin = systemConfig.prefixAdmin
+app.locals.moment = moment
 
 //! config ulr encoded
 app.use(bodyPraser.urlencoded({extended: true}))

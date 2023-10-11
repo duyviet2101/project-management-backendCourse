@@ -1,5 +1,6 @@
 const Product = require('../../models/product.model.js')
 const ProductCategory = require('../../models/product-category.model.js')
+const Account = require('../../models/account.model.js')
 
 const filterStatusHelper = require('../../helpers/filterStatus.js');
 const searchHelper = require('../../helpers/search.js')
@@ -53,6 +54,15 @@ module.exports.index = async (req, res) => {
         .limit(objectPagination.limitItems)
         .skip(objectPagination.skip)
         .sort(sort);
+
+    for (const product of products) {
+        const user = await Account.findOne({
+            _id: product.createdBy.account_id
+        })
+        if (user) {
+            product.createdBy.accountFullName = user.fullName
+        }
+    }
 
     if (products.length > 0 || countProduct == 0) {
         res.render("./admin/pages/products/index.pug", {
@@ -173,10 +183,10 @@ module.exports.createPost = async (req, res) => {
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
     req.body.position = req.body.position ? parseInt(req.body.position) : countProduct + 1;
+    req.body.createdBy = {
+        account_id: res.locals.user.id
+    }
 
-    // if (req.file && req.file.filename) {
-    //     req.body.thumbnail = `/uploads/${req.file.filename}`
-    // }
 
     const product = new Product(req.body);
     await product.save();

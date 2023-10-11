@@ -5,6 +5,7 @@ include ../../mixins/pagination.pug
 include ../../mixins/change-multi.pug
 include ../../mixins/alert.pug
 include ../../mixins/sort.pug
+include ../../mixins/moment.pug
 
 block main
   +alert-success(5000)
@@ -105,6 +106,11 @@ block main
                       data-status= item.status
                       data-id= item.id
                     ) Dừng hoạt động
+                td 
+                  if (item.createdBy.accountFullName)
+                    div #{item.createdBy.accountFullName}
+                    div 
+                      +formatDate(item.createdBy.createdAt)
                 td
                   a(
                     class="btn btn-secondary btn-sm"

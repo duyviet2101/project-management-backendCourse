@@ -1,5 +1,8 @@
 const Cart = require('../../models/cart.model.js')
 const Product = require('../../models/product.model.js')
+const Order = require('../../models/order.model.js')
+
+
 const productsHelper = require('../../helpers/product.js')
 
 //[get] /checkout
@@ -33,4 +36,47 @@ module.exports.index = async (req, res) => {
     pageTitle: "Đặt hàng",
     cartDetail: cart
   })
+}
+
+
+//[post] /checkout/order
+module.exports.order = async (req, res) => {
+  const cartId = req.cookies.cartId
+  const userInfo = req.body
+
+  const cart = await Cart.findOne({
+    _id: cartId
+  })
+
+  let products = [];
+
+  for (const product of cart.products) {
+    const objectProduct = {
+      product_id: product.product_id,
+      price: 0,
+      discountPercentage: 0,
+      quantity: product.quantity
+    }
+
+    const productInfo = await Product.findOne({
+      _id: product.product_id
+    })
+
+    objectProduct.price = productInfo.price
+    objectProduct.discountPercentage = productInfo.discountPercentage
+
+    products.push(objectProduct)
+  }
+
+  const objectOrder = {
+    cart_id: cartId,
+    userInfo: userInfo,
+    products: products
+  }
+
+  const order = await Order.create(objectOrder)
+
+  await cart.updateOne({products: []})
+
+  res.redirect(`/checkout/success/${order.id}`)
 }

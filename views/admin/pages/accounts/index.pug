@@ -77,6 +77,8 @@ block main
                   if (role.permissions.includes("accounts_delete"))
                     button(
                       class="btn btn-danger btn-sm ml-1"
+                      button-delete
+                      data-id=item.id
                     ) Xóa
     form(
       id="form-change-status"

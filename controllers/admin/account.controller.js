@@ -120,3 +120,17 @@ module.exports.detail = async (req, res) => {
     res.redirect('back')
   }
 }
+
+// DELETE /admin/accounts/delete/:id
+module.exports.deleteItem = async (req, res) => {
+  const id = req.params.id
+
+  await Account.updateOne({
+    _id: id
+  }, {
+    deleted: true
+  })
+
+  req.flash('success', 'Xoá thành công!')
+  res.redirect('back')
+}

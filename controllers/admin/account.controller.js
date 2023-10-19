@@ -80,3 +80,18 @@ module.exports.editPatch = async (req, res) => {
 
   res.redirect("back");
 };
+
+// PATCH /admin/accounts/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+  const id = req.params.id
+  const status = req.params.status
+
+  await Account.updateOne({
+    _id: id
+  }, {
+    status: status
+  })
+
+  req.flash('success', 'Thay đổi trạng thái tài khoản thành công!')
+  res.redirect('back')
+}

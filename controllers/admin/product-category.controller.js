@@ -121,3 +121,23 @@ module.exports.detail = async (req, res) => {
         res.redirect(`/${prefixAdmin}/products-category`);
     }
 }
+
+// DELETE /admin/products-category/delete/:id
+module.exports.delete = async (req, res, next) => {
+    const id = req.params.id
+
+    await ProductCategory.updateOne(
+        {
+            _id: id
+        },
+        {
+            deleted: true,
+            deletedBy: {
+                account_id: res.locals.user.id,
+                deletedAt: new Date()
+            }
+        }
+    )
+    req.flash('success', 'Xoá danh mục thành công!')
+    res.redirect('back')
+}

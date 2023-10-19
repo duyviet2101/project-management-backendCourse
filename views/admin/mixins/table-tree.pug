@@ -54,3 +54,15 @@ mixin table-tree(items, level = 1)
           ) Xóa
     if item.children && item.children.length > 0
       +table-tree(item.children, level + 1)
+  form(
+    id="form-delete-item"
+    method="POST"
+    action=""
+    data-path=`/${prefixAdmin}/products-category/delete`
+  )
+  form(
+    id="form-change-status"
+    method="POST"
+    action=""
+    data-path=`/${prefixAdmin}/products-category/change-status`
+  )

@@ -1,7 +1,11 @@
 extends ../../layouts/default.pug
 include ../../mixins/table-tree.pug
+include ../../mixins/alert.pug
 
 block main
+  +alert-success(3000)
+  +alert-error(3000)
+  
   if (role.permissions.includes("products-category_view"))
     h1(class="mb-4") Danh mục sản phẩm
 
@@ -29,3 +33,4 @@ block main
                   th Hành động
               tbody
                 +table-tree(records)
+  script(src="/admin/js/products-category.js") 

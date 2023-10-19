@@ -107,3 +107,25 @@ module.exports.detail = async (req, res) => {
     roleData
   })
 }
+
+//DELETE /admin/roles/delete/:id
+module.exports.delete = async(req, res, next) => {
+  const id = req.params.id
+
+  const deletedBy = {
+    account_id: res.locals.user.id
+  }
+
+  await Role.updateOne(
+    {
+      _id: id
+    },
+    {
+      deleted: true,
+      deletedBy: deletedBy
+    }
+  )
+
+  req.flash('success', 'Xoá nhóm quyền thành công!')
+  res.redirect('back')
+}

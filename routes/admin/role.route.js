@@ -13,6 +13,8 @@ router.get("/edit/:id", controller.edit);
 
 router.get("/detail/:id", controller.detail);
 
+router.delete("/delete/:id", controller.delete);
+
 router.patch("/edit/:id", controller.editPatch);
 
 router.get("/permissions", controller.permissions);

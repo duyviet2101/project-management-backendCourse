@@ -37,7 +37,12 @@ module.exports.loginPost = async (req, res) => {
     res.redirect("back")
     return
   }
-  res.cookie("token", user.token)
+
+  const expiresTime = 1000 * 60 * 60 * 24;
+
+  res.cookie("token", user.token, {
+    expires: new Date(Date.now() + expiresTime)
+  })
   res.redirect(`/${prefixAdmin}/dashboard`)
 }
 

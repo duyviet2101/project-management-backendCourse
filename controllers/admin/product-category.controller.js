@@ -84,3 +84,40 @@ module.exports.editPatch = async (req, res) => {
     }, req.body)
     res.redirect(`/${prefixAdmin}/products-category`)
 }
+
+// [GEt] /admin/products-category/detail/:id
+module.exports.detail = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const productCategory = await ProductCategory.findOne({
+            _id: id,
+            deleted: false
+        }).lean()
+
+        const records = await ProductCategory.find({
+            deleted: false
+        })
+
+        //! get parents of productCategory
+        let parents = []
+        let parentId = productCategory.parent_id
+        while (parentId) {
+            const parent = records.find(item => item.id === parentId)
+            parents.push(parent)
+            parentId = parent.parent_id
+        }
+        parents.reverse()
+        productCategory.parents = parents
+
+
+
+        res.render('admin/pages/products-category/detail', {
+            pageTitle: "Chi tiết danh mục",
+            productCategory
+        })
+    } catch (error) {
+        console.log(error)
+        req.flash("error", "Không tồn tại!")
+        res.redirect(`/${prefixAdmin}/products-category`);
+    }
+}

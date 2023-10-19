@@ -194,3 +194,24 @@ module.exports.delete = async (req, res, next) => {
     req.flash('success', 'Xoá danh mục thành công!')
     res.redirect('back')
 }
+
+// PATCH /admin/products-category/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+    const status = req.params.status
+    const id = req.params.id
+
+    const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+    }
+
+    await ProductCategory.updateOne({
+        _id: id,
+    }, {
+        status: status,
+        $push: {updatedBy: updatedBy}
+    })
+
+    req.flash('success', 'Thay đổi trạng thái danh mục thành công!')
+    res.redirect('back')
+}

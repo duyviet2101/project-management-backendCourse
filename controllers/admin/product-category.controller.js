@@ -45,9 +45,15 @@ module.exports.createPost = async (req, res) => {
         req.body.position = parseInt(req.body.position);
     }
 
+    const createdBy = {
+        account_id: res.locals.user.id,
+    }
+    req.body.createdBy = createdBy
+
     const produtCategory = new ProductCategory(req.body);
     await produtCategory.save()
 
+    req.flash('success', "Tạo danh mục thành công!")
     res.redirect(`/${prefixAdmin}/products-category`)
 }
 
@@ -79,9 +85,16 @@ module.exports.editPatch = async (req, res) => {
 
     req.body.position = parseInt(req.body.position);
 
+    const updatedBy = {
+        account_id: res.locals.user.id
+    }
+
     await ProductCategory.updateOne({
         _id: id
-    }, req.body)
+    }, {
+        ...req.body,
+        $push: {updatedBy: updatedBy}
+    })
     res.redirect(`/${prefixAdmin}/products-category`)
 }
 

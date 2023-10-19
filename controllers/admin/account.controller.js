@@ -95,3 +95,28 @@ module.exports.changeStatus = async (req, res) => {
   req.flash('success', 'Thay đổi trạng thái tài khoản thành công!')
   res.redirect('back')
 }
+
+// GET /admin/accounts/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const id = req.params.id
+    const account = await Account.findOne({
+      _id: id,
+      deleted: false
+    }).lean()
+
+    const role = await Role.findOne({
+      _id: account.role_id
+    }).lean()
+
+    account.role = role.title
+
+    res.render('admin/pages/accounts/detail', {
+      pageTitle: "Chi tiết tài khoản",
+      account
+  })
+  } catch (error) {
+    req.flash('error', 'Tài khoản không tồn tại!')
+    res.redirect('back')
+  }
+}

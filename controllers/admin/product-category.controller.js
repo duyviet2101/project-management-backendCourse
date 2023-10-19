@@ -1,6 +1,8 @@
 const { prefixAdmin } = require('../../config/system.js')
 const createTree = require('../../helpers/createTree.js')
 const ProductCategory = require('../../models/product-category.model.js')
+const Product = require('../../models/product.model.js')
+const Account = require('../../models/account.model.js')
 
 // [GET] /admin/products-category
 module.exports.index = async (req, res) => {
@@ -9,6 +11,25 @@ module.exports.index = async (req, res) => {
     }
 
     const records = await ProductCategory.find(find)
+
+    for (const record of records) {
+        const userCreate = await Account.findOne({
+            _id: record.createdBy.account_id
+        })
+        if (userCreate) {
+            record.createdBy.accountFullName = userCreate.fullName
+        }
+
+        const userUpdateId = record.updatedBy.slice(-1)[0]
+        if (userUpdateId) {
+            const userUpdate = await Account.findOne({
+                _id: record.updatedBy.slice(-1)[0].account_id
+            })
+            if (userUpdate) {
+                record.updatedBy.slice(-1)[0].accountFullName = userUpdate.fullName
+            }
+        }
+    }
 
     const newRecords = createTree(records)
 
@@ -151,6 +172,25 @@ module.exports.delete = async (req, res, next) => {
             }
         }
     )
+
+    await ProductCategory.updateMany(
+        {
+            parent_id: id
+        },
+        {
+            parent_id: ""
+        }
+    )
+
+    await Product.updateMany(
+        {
+            product_category_id: id
+        },
+        {
+            product_category_id: ""
+        }
+    )
+
     req.flash('success', 'Xoá danh mục thành công!')
     res.redirect('back')
 }

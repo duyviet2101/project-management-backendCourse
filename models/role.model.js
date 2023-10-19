@@ -14,13 +14,28 @@ const roleSchema = new mongoose.Schema(
     },
     deletedBy: {
       account_id: String,
-      deletedAt: {
+      deletedAt: Date
+    },
+    updatedBy: [
+      {
+        account_id: String,
+        updatedAt: {
+          type: Date,
+          default: Date.now()
+        }
+      }
+    ],
+    createdBy: {
+      account_id: String,
+      createdAt: {
         type: Date,
         default: Date.now()
-      }
-    }
+      },
+    },
   },
-  { timestamps: true }
+  {
+    // timestamps: true 
+  }
 );
 
 const Role = mongoose.model("Role", roleSchema, "roles");

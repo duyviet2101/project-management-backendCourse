@@ -42,7 +42,7 @@ const productCategorySchema = new mongoose.Schema({
     }
   ]
 }, {
-  timestamps: true
+  // timestamps: true
 });
 
 const ProductCategory = mongoose.model('ProductCategory', productCategorySchema, 'products-category')

@@ -1,5 +1,6 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
+include ../../mixins/moment.pug
 
 block main
   if (role.permissions.includes("roles_view"))
@@ -27,6 +28,8 @@ block main
               th STT
               th Nhóm quyền
               th Mô tả ngắn
+              th Người tạo
+              th Người cập nhật
               th Hành động
 
           tbody
@@ -36,6 +39,16 @@ block main
                   td #{index + 1}
                   td #{item.title}
                   td #{item.description}
+                  td
+                    if (item.createdBy.accountFullName)
+                      div #{item.createdBy.accountFullName} 
+                      div
+                        +formatDate(item.createdBy.createdAt)
+                  td
+                    if (item.updatedBy.length > 0)
+                      div #{item.updatedBy.slice(-1)[0].accountFullName} 
+                      div
+                        +formatDate(item.updatedBy.slice(-1)[0].updatedAt)
                   td
                     a(
                       class="btn btn-secondary btn-sm"

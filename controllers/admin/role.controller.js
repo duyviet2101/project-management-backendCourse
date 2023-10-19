@@ -1,4 +1,5 @@
 const Role = require("../../models/role.model");
+const Account = require('../../models/account.model.js')
 
 const systemConfig = require("../../config/system");
 
@@ -7,6 +8,25 @@ module.exports.index = async (req, res) => {
   const records = await Role.find({
     deleted: false
   });
+
+  for (const record of records) {
+    const userCreate = await Account.findOne({
+      _id: record.createdBy.account_id
+    })
+    if (userCreate) {
+      record.createdBy.accountFullName = userCreate.fullName
+    }
+
+    const userUpdateId = record.updatedBy.slice(-1)[0].account_id
+    if (userUpdateId) {
+      const userUpdate = await Account.findOne({
+        _id: userUpdateId
+      })
+      if (userUpdate) {
+        record.updatedBy.slice(-1)[0].accountFullName = userUpdate.fullName
+      }
+    }
+  }
 
   res.render("admin/pages/roles/index", {
     pageTitle: "Danh sách nhóm quyền",
@@ -23,8 +43,14 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/roles/createPost
 module.exports.createPost = async (req, res) => {
-  const record = new Role(req.body);
-  await record.save();
+  const createdBy = {
+    account_id: res.locals.user.id
+  } 
+
+  const record = await Role.create({
+    ...req.body,
+    createdBy
+  })
 
   req.flash("success", "Thêm nhóm quyền thành công");
   
@@ -54,7 +80,16 @@ module.exports.edit = async (req, res) => {
 module.exports.editPatch = async (req, res) => {
   const id = req.params.id;
 
-  await Role.updateOne({ _id: id }, req.body);
+  const updatedBy = {
+    account_id: res.locals.user.id
+  }
+
+  await Role.updateOne({ _id: id }, {
+    ...req.body,
+    $push: {
+      updatedBy: updatedBy
+    }
+  });
 
   req.flash("success", "Cập nhật nhóm quyền thành công");
   
@@ -76,6 +111,10 @@ module.exports.permissions = async (req, res) => {
 // [PATCH] /admin/roles/permissions
 module.exports.permissionsPatch = async (req, res) => {
   const permissions = JSON.parse(req.body.permissions);
+
+  const updatedBy = {
+    account_id: res.locals.user.id
+  }
   
   for (const item of permissions) {
     await Role.updateOne(
@@ -113,7 +152,8 @@ module.exports.delete = async(req, res, next) => {
   const id = req.params.id
 
   const deletedBy = {
-    account_id: res.locals.user.id
+    account_id: res.locals.user.id,
+    deletedAt: Date.now()
   }
 
   await Role.updateOne(

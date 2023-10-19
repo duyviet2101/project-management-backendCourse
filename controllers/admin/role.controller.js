@@ -92,3 +92,18 @@ module.exports.permissionsPatch = async (req, res) => {
 
   res.redirect("back");
 }
+
+// GET /admin/roles/detail/:id
+module.exports.detail = async (req, res) => {
+  const id = req.params.id
+
+  const roleData = await Role.findOne({
+    deleted: false,
+    _id: id
+  })
+
+  res.render('admin/pages/roles/detail', {
+    pageTitle: "Chi tiết nhóm quyền",
+    roleData
+  })
+}

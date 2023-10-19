@@ -63,3 +63,24 @@ if(dataRecords) {
   })
 }
 // End Permissions Data Default
+
+// Permissions Data detail
+
+const dataRecordDetail = document.querySelector("[data-record-detail]")
+if (dataRecordDetail) {
+  const record = JSON.parse(dataRecordDetail.getAttribute("data-record-detail"))
+  const tablePermissionDetail = document.querySelector('[table-permissions-detail]')
+
+  const inputs = tablePermissionDetail.querySelectorAll('input')
+  inputs.forEach(input => {
+    input.disabled = true
+  })
+
+  record.permissions.forEach(permission => {
+    const row = tablePermissionDetail.querySelector(`tr[data-name="${permission}"]`)
+    const input = row.querySelector('input')
+    input.checked = true
+  })
+}
+
+// end Permissions Data detail

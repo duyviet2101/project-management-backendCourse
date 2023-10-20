@@ -6,18 +6,18 @@ block main
   +alert-success(3000)
   +alert-error(3000)
   
-  if (role.permissions.includes("products-category_view"))
-    h1(class="mb-4") Danh mục sản phẩm
-
+  if (role.permissions.includes("posts-category_view"))
+    h1(class="mb-4") Danh mục bài viết
+    
     .card.mb-3
       .card-header Danh sách
       .card-body
         .row
           .col-8
           .col-4.text-right
-            if (role.permissions.includes("products-category_create"))
+            if (role.permissions.includes("posts-category_create"))
               a(
-                href=`/${prefixAdmin}/products-category/create`
+                href=`/${prefixAdmin}/posts-category/create`
                 class="btn btn-outline-success"
               ) + Thêm mới
           table(
@@ -34,5 +34,4 @@ block main
                   th Người cập nhật
                   th Hành động
               tbody
-                +table-tree({items: records, path : "products-category"})
-  script(src="/admin/js/products-category.js") 
+                +table-tree({items: records, path: 'posts-category'})

@@ -1,0 +1,135 @@
+extends ../../layouts/default.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/search.pug
+include ../../mixins/pagination.pug
+include ../../mixins/change-multi.pug
+include ../../mixins/alert.pug
+include ../../mixins/sort.pug
+include ../../mixins/moment.pug
+include ../../mixins/select-tree.pug
+
+block main
+  +alert-success(5000)
+  +alert-error  (5000)
+  if (role.permissions.includes("posts_view"))
+    h1(class="mb-4") Danh sách sản phẩm
+
+    .card.mb-3
+      .card-header Danh sách
+      .card-body
+        .row
+            .col-8
+            .col-4.text-right
+              if (role.permissions.includes("posts_create"))
+                a(
+                  href=`/${prefixAdmin}/posts/create`
+                  class="btn btn-outline-success"
+                ) + Thêm mới
+        table(
+          class= "table table-hover table-sm"
+          checkbox-multi
+        )
+          thead
+            tr
+              th 
+                input(type="checkbox" name="checkall")
+              th STT
+              th Hình ảnh
+              th Tiêu đề
+              th Danh mục
+              th Vị trí
+              th Trạng thái
+              th Người tạo
+              th Người cập nhật
+              th Hành động
+
+          tbody
+            each item, index in posts 
+              tr 
+                td
+                  input(
+                    type="checkbox"
+                    name="id"
+                    value=item.id
+                  )
+                //- td #{pagination.limitItems*(pagination.currentPage - 1) + (index + 1)}
+                td #{index}
+                td
+                  img(
+                    img-product
+                    src= item.thumbnail
+                    alt= item.title
+                    width="100px"
+                    height="auto"
+                    style="cursor: pointer"
+                  )
+                td= item.title
+                td
+                  a(href=`/${prefixAdmin}/posts-category/detail/${item.post_category_id}`) #{item.post_category_title} 
+                td 
+                  input(
+                    type="number"
+                    value=item.position
+                    style="width: 60px"
+                    min="1"
+                    name="position"
+                  )
+                td
+                  if (item.status == "active")
+                    button(
+                      class="badge badge-success"
+                      button-change-status
+                      data-status= item.status
+                      data-id= item.id
+                    ) Hoạt động 
+                  else 
+                    button(
+                      class="badge badge-danger"
+                      button-change-status
+                      data-status= item.status
+                      data-id= item.id
+                    ) Dừng hoạt động
+                td 
+                  if (item.createdBy && item.createdBy.accountFullName)
+                    div #{item.createdBy.accountFullName}
+                    div 
+                      +formatDate(item.createdBy.createdAt)
+                td 
+                  if (item.updatedBy && item.updatedBy.length > 0)
+                    div #{item.updatedBy.slice(-1)[0].accountFullName}
+                    div 
+                      +formatDate(item.updatedBy.slice(-1)[0].updatedAt)
+                td
+                  a(
+                    class="btn btn-secondary btn-sm"
+                    href= `/${prefixAdmin}/posts/detail/${item.id}`
+                  ) Xem chi tiết
+                  if (role.permissions.includes("posts_edit"))
+                    a(
+                      class="btn btn-warning btn-sm"
+                      href= `/${prefixAdmin}/posts/edit/${item.id}`
+                    ) Sửa
+                  if (role.permissions.includes("posts_delete"))
+                    button(
+                      class="btn btn-danger btn-sm ml-1"
+                      button-delete
+                      data-id= item.id
+                    ) Xóa
+            else 
+              tr 
+                td(
+                  colspan="7"
+                  class="text-center"
+                ) Không tìm thấy sản phẩm nào!
+    form(
+      id="form-change-status"
+      method="POST"
+      action=""
+      data-path=`/${prefixAdmin}/posts/change-status`
+    )
+    form(
+      id="form-delete-item"
+      method="POST"
+      action=""
+      data-path=`/${prefixAdmin}/posts/delete`
+    )

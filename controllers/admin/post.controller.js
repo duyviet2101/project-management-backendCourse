@@ -236,3 +236,24 @@ module.exports.changeMulti = async (req, res) => {
 
   res.redirect('back')
 }
+
+// PATCH /admin/posts/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+  const id = req.params.id
+  const status = req.params.status
+
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: Date.now()
+  }
+
+  await Post.updateOne({
+    _id: id
+  }, {
+    status: status,
+    $push: {updatedBy: updatedBy}
+  })
+
+  req.flash('success', 'Thay đổi trạng thái bài viết thành công!')
+  res.redirect('back')
+}

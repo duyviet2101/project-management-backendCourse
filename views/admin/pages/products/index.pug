@@ -6,6 +6,7 @@ include ../../mixins/change-multi.pug
 include ../../mixins/alert.pug
 include ../../mixins/sort.pug
 include ../../mixins/moment.pug
+include ../../mixins/select-tree.pug
 
 block main
   +alert-success(5000)
@@ -25,6 +26,13 @@ block main
               ) Thùng rác
           .col-6
             +search(keyword)
+          .col-6
+            .d-flex.align-items-start
+              .form-group
+                p Danh mục
+                select(name="product-category" class="form-control" category-filter default-value=category)
+                  option(value="") -- Tất cả --
+                  +select-tree(productCategories, 1, category)
 
     .card.mb-3
       .card-header Sắp xếp

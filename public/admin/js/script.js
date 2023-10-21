@@ -19,6 +19,23 @@ if (buttonsStatus.length > 0) {
 }
 //! end button status
 
+//! category filter
+
+const categoryFilter = document.querySelector('[category-filter]')
+if (categoryFilter) {
+    let url = new URL(window.location.href)
+    categoryFilter.addEventListener('change', (e) => {
+        const id = categoryFilter.value
+        if (id) {
+            url.searchParams.set('category', id)
+        } else {
+            url.searchParams.delete('category')
+        }
+        window.location.href = url.href
+    })
+}
+
+//! end category filter
 
 //! search form
 

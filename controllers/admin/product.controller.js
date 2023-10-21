@@ -25,6 +25,31 @@ module.exports.index = async (req, res) => {
         find.status = req.query.status;
     };
 
+    //! category
+    const category = req.query.category
+    const getSubCategory = async (parentId) => {
+        const subs = await ProductCategory.find({
+            parent_id: parentId,
+            deleted: false,
+        });
+
+        let allSub = [...subs];
+
+        for (const sub of subs) {
+            const childs = await getSubCategory(sub.id);
+            allSub = allSub.concat(childs);
+        }
+
+        return allSub;
+    }
+
+    const listSubCategory = await getSubCategory(category);
+
+    const listSubCategoryId = listSubCategory.map(item => item.id);
+    if (category) {
+        find.product_category_id = {$in: [category, ...listSubCategoryId]}
+    }
+
     //! search
     if (req.query.keyword) {
         find.title = objectSearch.regex;
@@ -95,7 +120,9 @@ module.exports.index = async (req, res) => {
             products: products,
             filterStatus: filterStatus,
             keyword: objectSearch.keyword,
-            pagination: objectPagination
+            pagination: objectPagination,
+            productCategories: createTree(productCategories),
+            category: category
         });
     } else {
         let stringQuery = "";

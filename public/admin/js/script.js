@@ -364,7 +364,7 @@ if (sort) {
 
     if (sortKey && sortValue) {
         const stringSort = sortKey + '-' + sortValue
-        const optionSelected = sortSelect.querySelector(`option[value=${stringSort}]`)
+        const optionSelected = sortSelect.querySelector(`option[value="${stringSort}"]`)
         optionSelected.selected = true
     }
 }

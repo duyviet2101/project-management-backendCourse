@@ -1,4 +1,6 @@
-const { prefixAdmin } = require('../../config/system.js')
+const {
+    prefixAdmin
+} = require('../../config/system.js')
 const createTree = require('../../helpers/createTree.js')
 const ProductCategory = require('../../models/product-category.model.js')
 const Product = require('../../models/product.model.js')
@@ -93,7 +95,7 @@ module.exports.edit = async (req, res) => {
 
     const newRecords = createTree(records)
 
-    res.render(`${prefixAdmin}/pages/products-category/edit`,{
+    res.render(`${prefixAdmin}/pages/products-category/edit`, {
         data,
         records: newRecords
     })
@@ -114,7 +116,9 @@ module.exports.editPatch = async (req, res) => {
         _id: id
     }, {
         ...req.body,
-        $push: {updatedBy: updatedBy}
+        $push: {
+            updatedBy: updatedBy
+        }
     })
     res.redirect(`/${prefixAdmin}/products-category`)
 }
@@ -143,6 +147,23 @@ module.exports.detail = async (req, res) => {
         parents.reverse()
         productCategory.parents = parents
 
+        //! get info create and update
+        const userCreate = await Account.findOne({
+            _id: productCategory.createdBy.account_id
+        })
+        if (userCreate) {
+            productCategory.createdBy.accountFullName = userCreate.fullName
+        }
+
+        if (productCategory.updatedBy.length > 0) {
+            const userUpdate = await Account.findOne({
+                _id: productCategory.updatedBy.slice(-1)[0].account_id
+            })
+            if (userUpdate) {
+                productCategory.updatedBy.slice(-1)[0].accountFullName = userUpdate.fullName
+            }
+        }
+
 
 
         res.render('admin/pages/products-category/detail', {
@@ -160,36 +181,27 @@ module.exports.detail = async (req, res) => {
 module.exports.delete = async (req, res, next) => {
     const id = req.params.id
 
-    await ProductCategory.updateOne(
-        {
-            _id: id
-        },
-        {
-            deleted: true,
-            deletedBy: {
-                account_id: res.locals.user.id,
-                deletedAt: new Date()
-            }
+    await ProductCategory.updateOne({
+        _id: id
+    }, {
+        deleted: true,
+        deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date()
         }
-    )
+    })
 
-    await ProductCategory.updateMany(
-        {
-            parent_id: id
-        },
-        {
-            parent_id: ""
-        }
-    )
+    await ProductCategory.updateMany({
+        parent_id: id
+    }, {
+        parent_id: ""
+    })
 
-    await Product.updateMany(
-        {
-            product_category_id: id
-        },
-        {
-            product_category_id: ""
-        }
-    )
+    await Product.updateMany({
+        product_category_id: id
+    }, {
+        product_category_id: ""
+    })
 
     req.flash('success', 'Xoá danh mục thành công!')
     res.redirect('back')
@@ -209,7 +221,9 @@ module.exports.changeStatus = async (req, res) => {
         _id: id,
     }, {
         status: status,
-        $push: {updatedBy: updatedBy}
+        $push: {
+            updatedBy: updatedBy
+        }
     })
 
     req.flash('success', 'Thay đổi trạng thái danh mục thành công!')

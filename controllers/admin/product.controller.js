@@ -110,7 +110,9 @@ module.exports.changeStatus = async (req, res) => {
         _id: id
     }, {
         status: status,
-        $push: {updatedBy: updatedBy}
+        $push: {
+            updatedBy: updatedBy
+        }
     })
 
     req.flash('success', 'Cập nhật trạng thái thành công!')
@@ -136,7 +138,9 @@ module.exports.changeMulti = async (req, res) => {
                 }
             }, {
                 status: type,
-                $push: {updatedBy: updatedBy}
+                $push: {
+                    updatedBy: updatedBy
+                }
 
             });
             req.flash('success', `Cập nhật trạng thái ${ids.length} sản phẩm thành công!`)
@@ -162,7 +166,9 @@ module.exports.changeMulti = async (req, res) => {
                     _id: id
                 }, {
                     position: position,
-                    $push: {updatedBy: updatedBy}
+                    $push: {
+                        updatedBy: updatedBy
+                    }
                 });
             }
             req.flash('success', `Thay đổi vị trí ${ids.length} sản phẩm thành công!`)
@@ -236,9 +242,9 @@ module.exports.edit = async (req, res) => {
         let find = {
             deleted: false
         }
-    
+
         const records = await ProductCategory.find(find)
-    
+
         const newRecords = createTree(records)
 
         // console.log(product)
@@ -277,7 +283,9 @@ module.exports.editPatch = async (req, res) => {
         _id: id
     }, {
         ...req.body,
-        $push: {updatedBy: updatedBy}
+        $push: {
+            updatedBy: updatedBy
+        }
     })
     // console.log(req.body)
     req.flash("success", "Cập nhật sản phẩm thành công")
@@ -292,6 +300,23 @@ module.exports.detail = async (req, res) => {
             _id: id,
             deleted: false
         })
+
+        //! get info create and update
+        const userCreate = await Account.findOne({
+            _id: product.createdBy.account_id
+        })
+        if (userCreate) {
+            product.createdBy.accountFullName = userCreate.fullName
+        }
+
+        if (product.updatedBy.length > 0) {
+            const userUpdate = await Account.findOne({
+                _id: product.updatedBy.slice(-1)[0].account_id
+            })
+            if (userUpdate) {
+                product.updatedBy.slice(-1)[0].accountFullName = userUpdate.fullName
+            }
+        }
 
         res.render('admin/pages/products/detail', {
             pageTitle: "Chi tiết sản phẩm",

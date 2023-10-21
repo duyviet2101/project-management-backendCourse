@@ -45,7 +45,7 @@ module.exports.create = async (req, res) => {
 module.exports.createPost = async (req, res) => {
   const createdBy = {
     account_id: res.locals.user.id
-  } 
+  }
 
   const record = await Role.create({
     ...req.body,
@@ -53,7 +53,7 @@ module.exports.createPost = async (req, res) => {
   })
 
   req.flash("success", "Thêm nhóm quyền thành công");
-  
+
   res.redirect(`/${systemConfig.prefixAdmin}/roles`);
 }
 
@@ -84,7 +84,9 @@ module.exports.editPatch = async (req, res) => {
     account_id: res.locals.user.id
   }
 
-  await Role.updateOne({ _id: id }, {
+  await Role.updateOne({
+    _id: id
+  }, {
     ...req.body,
     $push: {
       updatedBy: updatedBy
@@ -92,7 +94,7 @@ module.exports.editPatch = async (req, res) => {
   });
 
   req.flash("success", "Cập nhật nhóm quyền thành công");
-  
+
   res.redirect("back");
 }
 
@@ -115,16 +117,13 @@ module.exports.permissionsPatch = async (req, res) => {
   const updatedBy = {
     account_id: res.locals.user.id
   }
-  
+
   for (const item of permissions) {
-    await Role.updateOne(
-      {
-        _id: item.id
-      },
-      {
-        permissions: item.permissions
-      }
-    );
+    await Role.updateOne({
+      _id: item.id
+    }, {
+      permissions: item.permissions
+    });
   }
 
   req.flash("success", "Cập nhật phân quyền thành công!");
@@ -141,6 +140,23 @@ module.exports.detail = async (req, res) => {
     _id: id
   })
 
+  //! get info create and update
+  const userCreate = await Account.findOne({
+    _id: roleData.createdBy.account_id
+  })
+  if (userCreate) {
+    roleData.createdBy.accountFullName = userCreate.fullName
+  }
+
+  if (roleData.updatedBy.length > 0) {
+    const userUpdate = await Account.findOne({
+      _id: roleData.updatedBy.slice(-1)[0].account_id
+    })
+    if (userUpdate) {
+      roleData.updatedBy.slice(-1)[0].accountFullName = userUpdate.fullName
+    }
+  }
+
   res.render('admin/pages/roles/detail', {
     pageTitle: "Chi tiết nhóm quyền",
     roleData
@@ -148,7 +164,7 @@ module.exports.detail = async (req, res) => {
 }
 
 //DELETE /admin/roles/delete/:id
-module.exports.delete = async(req, res, next) => {
+module.exports.delete = async (req, res, next) => {
   const id = req.params.id
 
   const deletedBy = {
@@ -156,15 +172,12 @@ module.exports.delete = async(req, res, next) => {
     deletedAt: Date.now()
   }
 
-  await Role.updateOne(
-    {
-      _id: id
-    },
-    {
-      deleted: true,
-      deletedBy: deletedBy
-    }
-  )
+  await Role.updateOne({
+    _id: id
+  }, {
+    deleted: true,
+    deletedBy: deletedBy
+  })
 
   req.flash('success', 'Xoá nhóm quyền thành công!')
   res.redirect('back')

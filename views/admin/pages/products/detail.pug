@@ -1,4 +1,6 @@
 extends ../../layouts/default.pug
+include ../../mixins/moment.pug
+
 
 block main
   if (role.permissions.includes("products_view"))
@@ -34,3 +36,16 @@ block main
 
     if (product.description)
       div(class="mb-4") !{product.description}
+
+    if (product.createdBy.accountFullName) 
+      div 
+        |Người tạo: #{product.createdBy.accountFullName}
+        br
+        |Thời gian tạo: 
+        +formatDate(product.createdBy.createdAt)
+    if (product.updatedBy.length > 0)
+      div
+        |Người cập nhật cuối: #{product.updatedBy.slice(-1)[0].accountFullName}
+        br
+        |Thời gian cập nhật: 
+        +formatDate(product.updatedBy.slice(-1)[0].updatedAt)

@@ -74,3 +74,54 @@ module.exports.createPost = async (req, res) => {
   req.flash('success', "Tạo danh mục bài viết thành công")
   res.redirect(`/${prefixAdmin}/posts-category`)
 }
+
+// GET /admin/posts-category/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const postCategory = await PostsCategory.findOne({
+      _id: req.params.id,
+      deleted: false
+    }).lean()
+
+    const records = await PostsCategory.find({
+      deleted: false
+    })
+  
+    //! get parents of postCategory
+    let parents = []
+    let parentId = postCategory.parent_id
+    while (parentId) {
+      const parent = records.find(item => item.id === parentId)
+      parents.push(parent)
+      parentId = parent.parent_id
+    }
+    parents.reverse()
+    postCategory.parents = parents
+
+    //! get info create and update
+    const userCreate = await Account.findOne({
+      _id: postCategory.createdBy.account_id
+    })
+    if (userCreate) {
+      postCategory.createdBy.accountFullName = userCreate.fullName
+    }
+
+    if (postCategory.updatedBy.length > 0) {
+      const userUpdate = await Account.findOne({
+        _id: postCategory.updatedBy.slice(-1)[0].account_id
+      })
+      if (userUpdate) {
+        postCategory.updatedBy.slice(-1)[0].accountFullName = userUpdate.fullName
+      }
+    }
+    
+    res.render('admin/pages/posts-category/detail', {
+      pageTitle: 'Chi tiết danh mục bài viết',
+      postCategory
+    })
+  } catch (error) {
+    console.log(error)
+    req.flash("error", "Không tồn tại!")
+    res.redirect(`/${prefixAdmin}/posts-category`);
+  }
+}

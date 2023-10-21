@@ -1,4 +1,6 @@
 extends ../../layouts/default.pug
+include ../../mixins/moment.pug
+
 
 block main
   if (role.permissions.includes("roles_view"))
@@ -9,6 +11,19 @@ block main
       div(class="mb-4") Mô tả: !{roleData.description}
 
     div(data-record-detail=roleData)
+
+    if (roleData.createdBy.accountFullName) 
+      div
+        |Người tạo: #{roleData.createdBy.accountFullName}
+        br
+        |Thời gian tạo: 
+        +formatDate(roleData.createdBy.createdAt)
+    if (roleData.updatedBy.length > 0)
+      div
+        |Người cập nhật cuối: #{roleData.updatedBy.slice(-1)[0].accountFullName}
+        br
+        |Thời gian cập nhật: 
+        +formatDate(roleData.updatedBy.slice(-1)[0].updatedAt)
 
     table(
       class="table table-hover table-sm"

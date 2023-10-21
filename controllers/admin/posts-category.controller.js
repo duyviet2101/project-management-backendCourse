@@ -149,7 +149,7 @@ module.exports.edit = async (req, res) => {
     res.render('admin/pages/posts-category/edit', {
       pageTitle: 'Chỉnh sửa danh mục bài viết',
       data: postCategory,
-      records
+      records: createTree(records)
     })
   } catch (error) {
     req.flash('error', 'Không tồn tại!')

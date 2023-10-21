@@ -360,17 +360,22 @@ module.exports.detail = async (req, res) => {
             }
         }
 
-        //! get product_category_title
+        //! get categories
         const productsCategories = await ProductCategory.find({
             deleted: false
         })
-        if (product.product_category_id) {
-            const category = productsCategories.find(item => item.id === product.product_category_id)
 
-            if (category) {
-                product.product_category_title = category.title
-            }
+        let categories = []
+        let categoryId = product.product_category_id
+        while (categoryId) {
+            const category = productsCategories.find(item => item.id === categoryId)
+            categories.push(category)
+            categoryId = category.parent_id
         }
+        categories.reverse()
+        product.categories = categories
+        //! end get categories
+
 
         res.render('admin/pages/products/detail', {
             pageTitle: "Chi tiết sản phẩm",

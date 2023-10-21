@@ -7,9 +7,11 @@ block main
     if (product.title)
       h1(class="mb-4") #{product.title}
 
-    if (product.product_category_title)
+    if (product.categories)
       div(class="mb-4") Danh mục: 
-        a(href=`/${prefixAdmin}/products-category/detail/${product.product_category_id}`) #{product.product_category_title} 
+        each category in product.categories
+          a(href=`/${prefixAdmin}/products-category/detail/${category.id}`) #{category.title} 
+          span > 
 
     if (product.price)
       div(class="mb-4") Giá: <b>#{product.price}$</b>

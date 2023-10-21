@@ -57,6 +57,7 @@ block main
               th STT
               th Hình ảnh
               th Tiêu đề
+              th Danh mục
               th Giá
               th Vị trí
               th Trạng thái
@@ -84,6 +85,8 @@ block main
                     style="cursor: pointer"
                   )
                 td= item.title
+                td
+                  a(href=`/${prefixAdmin}/products-category/detail/${item.product_category_id}`) #{item.product_category_title} 
                 td #{item.price}$
                 td 
                   input(

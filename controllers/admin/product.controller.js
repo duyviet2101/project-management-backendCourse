@@ -75,6 +75,20 @@ module.exports.index = async (req, res) => {
 
     }
 
+    //! get product_category_title
+
+    const productCategories = await ProductCategory.find({
+        deleted: false
+    })
+    for (const product of products) {
+        const productCategory = productCategories.find(item => item.id === product.product_category_id)
+        if (productCategory) {
+            product.product_category_title = productCategory.title
+        }
+    }
+
+    //! end get product_category_title
+
     if (products.length > 0 || countProduct == 0) {
         res.render("./admin/pages/products/index.pug", {
             pageTitle: 'Danh sách sản phẩm',
@@ -221,7 +235,8 @@ module.exports.createPost = async (req, res) => {
     req.body.stock = parseInt(req.body.stock);
     req.body.position = req.body.position ? parseInt(req.body.position) : countProduct + 1;
     req.body.createdBy = {
-        account_id: res.locals.user.id
+        account_id: res.locals.user.id,
+        createdAt: Date.now()
     }
 
 
@@ -315,6 +330,18 @@ module.exports.detail = async (req, res) => {
             })
             if (userUpdate) {
                 product.updatedBy.slice(-1)[0].accountFullName = userUpdate.fullName
+            }
+        }
+
+        //! get product_category_title
+        const productsCategories = await ProductCategory.find({
+            deleted: false
+        })
+        if (product.product_category_id) {
+            const category = productsCategories.find(item => item.id === product.product_category_id)
+
+            if (category) {
+                product.product_category_title = category.title
             }
         }
 

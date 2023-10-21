@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema({
   stock: Number,
   thumbnail: String,
   status: String,
-  featured: String,
+  featured: String, // san pham noi bat
   position: Number,
   slug: {
     type: String,
@@ -29,8 +29,7 @@ const productSchema = new mongoose.Schema({
   createdBy: {
     account_id: String,
     createdAt: {
-      type: Date,
-      default: Date.now()
+      type: Date
     },
   },
   deletedBy: {

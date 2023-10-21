@@ -148,14 +148,16 @@ module.exports.detail = async (req, res) => {
         productCategory.parents = parents
 
         //! get info create and update
-        const userCreate = await Account.findOne({
-            _id: productCategory.createdBy.account_id
-        })
-        if (userCreate) {
-            productCategory.createdBy.accountFullName = userCreate.fullName
+        if (productCategory.createdBy) {
+            const userCreate = await Account.findOne({
+                _id: productCategory.createdBy.account_id
+            }) 
+            if (userCreate) {
+                productCategory.createdBy.accountFullName = userCreate.fullName
+            }
         }
 
-        if (productCategory.updatedBy.length > 0) {
+        if (productCategory.updatedBy && productCategory.updatedBy.length > 0) {
             const userUpdate = await Account.findOne({
                 _id: productCategory.updatedBy.slice(-1)[0].account_id
             })

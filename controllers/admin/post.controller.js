@@ -3,7 +3,12 @@ const PostsCategory = require('../../models/posts-category.model.js')
 const Account = require('../../models/account.model.js')
 
 const createTree = require('../../helpers/createTree.js')
-const {prefixAdmin} = require('../../config/system.js')
+const filterStatusHelper = require('../../helpers/filterStatus.js')
+const searchHelper = require('../../helpers/search.js')
+const paginationHelper = require('../../helpers/pagination.js')
+const {
+  prefixAdmin
+} = require('../../config/system.js')
 
 //[GET] /admin/posts
 module.exports.index = async (req, res) => {
@@ -11,7 +16,58 @@ module.exports.index = async (req, res) => {
     deleted: false
   }
 
+  //!filterStatus
+  const filterStatus = filterStatusHelper(req.query);
+  //!end filterStatus
+
+  //!search
+  const objectSearch = searchHelper(req.query)
+  if (req.query.keyword) {
+    find.title = objectSearch.regex
+  }
+  //!end search
+
+  //! status
+  if (req.query.status) {
+    find.status = req.query.status
+  }
+  //! end status
+
+  //! category
+  const category = req.query.category
+  const getSubCategory = async (parentId) => {
+    const subs = await PostsCategory.find({
+      parent_id: parentId,
+      deleted: false,
+    });
+    let allSub = [...subs];
+    for (const sub of subs) {
+      const childs = await getSubCategory(sub.id);
+      allSub = allSub.concat(childs);
+    }
+    return allSub;
+  }
+
+  const listSubCategory = await getSubCategory(category);
+  const listSubCategoryId = listSubCategory.map(item => item.id);
+  
+  if (category) {
+    find.post_category_id = {$in: [category, ...listSubCategoryId]}
+  }
+  //! end category
+
+  //!pagination
+  let initPagination = {
+    currentPage: 1,
+    limitItems: 4
+  }
+  const countPost = await Post.count(find)
+  const objectPagination = paginationHelper(initPagination, req.query, countPost)
+  //!end pagination
+
   const posts = await Post.find(find)
+    .limit(objectPagination.limitItems)
+    .skip(objectPagination.skip)
 
   //! get update, create user infor
   for (const post of posts) {
@@ -35,7 +91,6 @@ module.exports.index = async (req, res) => {
   //! end get update, create user infor
 
   //!get info post_category_title
-
   const categories = await PostsCategory.find({
     deleted: false
   })
@@ -51,13 +106,29 @@ module.exports.index = async (req, res) => {
       }
     }
   }
-
   //!end get info post_category_title
 
-  res.render('admin/pages/posts/index', {
-    pageTitle: 'Danh sách bài viết',
-    posts
-  })
+  if (posts.length > 0 || countPost === 0) {
+    res.render('admin/pages/posts/index', {
+      pageTitle: 'Danh sách bài viết',
+      posts,
+      filterStatus,
+      keyword: objectSearch.keyword,
+      postCategories: createTree(categories),
+      category,
+      pagination: objectPagination
+    })
+  } else {
+    let stringQuery = "";
+    for (const key in req.query) {
+      if (key != "page") {
+        stringQuery += `&${key}=${req.query[key]}`
+      }
+    }
+    const href = `${req.baseUrl}?page=1${stringQuery}`
+    res.redirect(href)
+  }
+
 }
 
 
@@ -93,7 +164,7 @@ module.exports.createPost = async (req, res) => {
   }
 
   req.body.createdBy = createdBy
-  
+
   await Post.create(req.body)
 
   req.flash('success', 'Tạo bài viết thành công!')

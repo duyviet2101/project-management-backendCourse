@@ -1,4 +1,4 @@
-module.exports = (objectPagination, query, countProduct) => {
+module.exports = (objectPagination, query, counItems) => {
     
     
     if (query.page) {
@@ -7,7 +7,7 @@ module.exports = (objectPagination, query, countProduct) => {
     
     objectPagination.skip = (objectPagination.currentPage - 1) * objectPagination.limitItems;
 
-    objectPagination.totalPage = Math.ceil(countProduct / objectPagination.limitItems);
+    objectPagination.totalPage = Math.ceil(counItems / objectPagination.limitItems);
     
     return objectPagination;
 }

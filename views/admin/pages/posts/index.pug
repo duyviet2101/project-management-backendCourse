@@ -12,20 +12,35 @@ block main
   +alert-success(5000)
   +alert-error  (5000)
   if (role.permissions.includes("posts_view"))
-    h1(class="mb-4") Danh sách sản phẩm
+    h1(class="mb-4") Danh sách bài viết
 
+    .card.mb-3
+      .card-header Bộ lọc và Tìm kiếm
+      .card-body
+        .row 
+          .col-6
+            +filter-status(filterStatus)
+          .col-6
+            +search(keyword)
+          .col-6
+            .d-flex.align-items-start
+              .form-group
+                p Danh mục
+                select(name="product-category" class="form-control" category-filter default-value=category)
+                  option(value="") -- Tất cả --
+                  +select-tree(postCategories, 1, category)
     .card.mb-3
       .card-header Danh sách
       .card-body
         .row
-            .col-8
-            .col-4.text-right
-              if (role.permissions.includes("posts_create"))
-                a(
-                  href=`/${prefixAdmin}/posts/create`
-                  class="btn btn-outline-success"
-                ) + Thêm mới
-        table(
+          .col-8
+          .col-4.text-right
+            if (role.permissions.includes("posts_create"))
+              a(
+                href=`/${prefixAdmin}/posts/create`
+                class="btn btn-outline-success"
+              ) + Thêm mới
+        table(-
           class= "table table-hover table-sm"
           checkbox-multi
         )
@@ -118,7 +133,7 @@ block main
             else 
               tr 
                 td(
-                  colspan="7"
+                  colspan="10"
                   class="text-center"
                 ) Không tìm thấy sản phẩm nào!
     form(
@@ -133,3 +148,4 @@ block main
       action=""
       data-path=`/${prefixAdmin}/posts/delete`
     )
+    +pagination(pagination)

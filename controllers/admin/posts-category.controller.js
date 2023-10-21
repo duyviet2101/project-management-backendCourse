@@ -177,11 +177,31 @@ module.exports.editPatch = async (req, res) => {
         updatedBy: updatedBy
       }
     })
-    
+
     req.flash('Cập nhật thành công!')
     return res.redirect(`/${prefixAdmin}/posts-category`)
   } catch (error) {
     req.flash('Lỗi!')
     return res.redirect(`/${prefixAdmin}/posts-category`)
   }
+}
+
+// PATCH /admin/posts-category/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+  const id = req.params.id
+  const status = req.params.status
+
+  const updatedBy = {
+    account_id: res.locals.user.id
+  }
+
+  await PostsCategory.updateOne({
+    _id: id
+  }, {
+    status: status,
+    $push: {updatedBy: updatedBy}
+  })
+
+  req.flash('success','Cập nhật trạng thái thành công!')
+  res.redirect('back')
 }

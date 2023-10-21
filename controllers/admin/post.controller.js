@@ -91,7 +91,7 @@ module.exports.index = async (req, res) => {
     const userUpdatedId = post.updatedBy.slice(-1)[0]
     if (userUpdatedId) {
       const userUpdated = await Account.findOne({
-        _id: userUpdatedId
+        _id: userUpdatedId.account_id
       })
       if (userUpdated) {
         post.updatedBy.slice(-1)[0].accountFullName = userUpdated.fullName
@@ -180,4 +180,59 @@ module.exports.createPost = async (req, res) => {
   req.flash('success', 'Tạo bài viết thành công!')
   res.redirect(`/${prefixAdmin}/posts`)
 
+}
+
+// PATCH /admin/posts/change-multi
+module.exports.changeMulti = async (req, res) => {
+  const type = req.body.type
+  const ids = req.body.ids.split(", ")
+
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date()
+  }
+
+  switch (type) {
+    case "active":
+    case "inactive":
+      await Post.updateMany({
+        _id: {$in: ids}
+      }, {
+        status: type,
+        $push: {
+          updatedBy: updatedBy
+        }
+      })
+      req.flash('success', `Cập nhật trạng thái ${ids.length} bài viết thành công`)
+      break;
+    case 'delete-all':
+      await Post.updateMany({
+        _id: {$in: ids}
+      }, {
+        deleted: true,
+        deletedBy: {
+          account_id: res.locals.user.id,
+          deletedAt: new Date()
+        }
+      })
+      req.flash('success', `Xoá ${ids.length} bài viết thành công`)
+      break;
+    case "change-position": 
+      for (const item of ids) {
+        const [id, position] = item.split('-')
+        await Post.updateOne({
+          _id: id
+        }, {
+          position: position,
+          $push: {
+            updatedBy: updatedBy 
+          }
+        })
+      }
+      req.flash('success', `Thay đổi vị trí ${ids.length} bài viết thành công`)
+      break;
+    
+  }
+
+  res.redirect('back')
 }

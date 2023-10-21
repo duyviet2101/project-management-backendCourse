@@ -4,6 +4,7 @@ const Role = require('../../models/role.model.js')
 
 module.exports.requireAuth = async (req, res, next) => {
   if (!req.cookies.token) {
+    res.clearCookie('token')
     res.redirect(`/${prefixAdmin}/auth/login`)
     return
   }
@@ -12,6 +13,7 @@ module.exports.requireAuth = async (req, res, next) => {
     token: req.cookies.token
   })
   if (!user) {
+    res.clearCookie('token')
     res.redirect(`/${prefixAdmin}/auth/login`)
     return
   }

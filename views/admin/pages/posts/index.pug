@@ -29,6 +29,14 @@ block main
                 select(name="product-category" class="form-control" category-filter default-value=category)
                   option(value="") -- Tất cả --
                   +select-tree(postCategories, 1, category)
+
+    .card.mb-3
+      .card-header Sắp xếp
+      .card-body
+        .row 
+          .col-6
+            +sort-posts()
+
     .card.mb-3
       .card-header Danh sách
       .card-body

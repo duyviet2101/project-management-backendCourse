@@ -65,9 +65,19 @@ module.exports.index = async (req, res) => {
   const objectPagination = paginationHelper(initPagination, req.query, countPost)
   //!end pagination
 
+  //!sort
+  let sort = {}
+  if (req.query.sortKey && req.query.sortValue) {
+    sort[req.query.sortKey] = req.query.sortValue
+  } else {
+    sort.position = 'desc'
+  }
+  //!end sort
+
   const posts = await Post.find(find)
     .limit(objectPagination.limitItems)
     .skip(objectPagination.skip)
+    .sort(sort)
 
   //! get update, create user infor
   for (const post of posts) {

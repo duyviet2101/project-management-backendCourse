@@ -16,3 +16,23 @@ mixin sort()
       class="btn btn-danger mt-2"
       sort-clear
     ) Clear
+
+mixin sort-posts()
+  div(sort)
+    select(
+      class="form-control"
+      name="sort"
+      sort-select
+    )
+      option(value="position-desc") Vị trí giảm dần
+      option(value="position-asc") Vị trí tăng dần
+      option(value="createdBy.createdAt-desc") Tạo mới nhất
+      option(value="createdBy.createdAt-asc") Tạo cũ nhất
+      option(value="updatedAt-desc") Cập nhật mới nhất
+      option(value="updatedAt-asc") Cập nhật cũ nhất
+
+
+    button(
+      class="btn btn-danger mt-2"
+      sort-clear
+    ) Clear

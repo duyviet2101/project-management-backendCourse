@@ -40,7 +40,9 @@ const postSchema = new mongoose.Schema({
     }
   ]
 }, {
-  // timestamps: true
+  timestamps: {
+    updatedAt: true
+  }
 });
 
 const post = mongoose.model('post', postSchema, 'posts')

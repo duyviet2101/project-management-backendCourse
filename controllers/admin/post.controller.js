@@ -365,3 +365,21 @@ module.exports.editPatch = async (req, res) => {
   req.flash("success", "Cập nhật bài viết thành công")
   res.redirect(`/${prefixAdmin}/posts`);
 }
+
+// DELETE /admin/posts/delete/:id
+module.exports.deleteItem = async (req, res) => {
+  const id = req.params.id
+
+  await Post.updateOne({
+    _id: id
+  }, {
+    deleted: true,
+    deletedBy: {
+      account_id: res.locals.user.id,
+      deletedAt: new Date()
+    }
+  })
+
+  req.flash('success', 'Xoá bài viết thành công!')
+  res.redirect('back')
+}

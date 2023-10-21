@@ -1,0 +1,58 @@
+extends ../../layouts/default.pug
+include ../../mixins/moment.pug
+
+
+block main
+  if (role.permissions.includes("posts_view"))
+    if (post.title)
+      h1(class="mb-4") #{post.title}
+
+    if (post.categories)
+      div(class="mb-4") Danh mục: 
+        each category in post.categories
+          a(href=`/${prefixAdmin}/posts-category/detail/${category.id}`) #{category.title} 
+          span > 
+
+    if (post.featured)
+      div(class="mb-4") 
+        |Nổi bật: 
+        if (post.featured === '0')
+          | <b>Không</b>
+        else
+          | <b>Có</b>
+
+    if (post.thumbnail)
+      div(class="mb-4")
+        img(
+          src=post.thumbnail
+          style="width: 100px"
+        )
+
+    if (post.status)
+      div(class="mb-4")
+        span Trạng thái:
+        if (post.status === "active")
+          span(class="badge badge-success") Hoạt động
+        else
+          span(class="badge badge-danger") Dừng hoạt động
+
+    if (post.position)
+      div(class="mb-4") Vị trí: <b>#{post.position}</b>
+
+    if (post.content)
+      div(class="mb-4")
+        | Nội dung: 
+        |!{post.content}
+
+    if (post.createdBy && post.createdBy.accountFullName) 
+      div 
+        |Người tạo: #{post.createdBy.accountFullName}
+        br
+        |Thời gian tạo: 
+        +formatDate(post.createdBy.createdAt)
+    if (post.updatedBy && post.updatedBy.length > 0)
+      div
+        |Người cập nhật cuối: #{post.updatedBy.slice(-1)[0].accountFullName}
+        br
+        |Thời gian cập nhật: 
+        +formatDate(post.updatedBy.slice(-1)[0].updatedAt)

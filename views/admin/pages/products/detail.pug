@@ -12,6 +12,14 @@ block main
         each category in product.categories
           a(href=`/${prefixAdmin}/products-category/detail/${category.id}`) #{category.title} 
           span > 
+    
+    if (product.featured)
+      div(class="mb-4") 
+        |Nổi bật: 
+        if (product.featured === '0')
+          | <b>Không</b>
+        else
+          | <b>Có</b>
 
     if (product.price)
       div(class="mb-4") Giá: <b>#{product.price}$</b>
@@ -41,7 +49,9 @@ block main
       div(class="mb-4") Vị trí: <b>#{product.position}</b>
 
     if (product.description)
-      div(class="mb-4") !{product.description}
+      div(class="mb-4")
+        |Mô tả:  
+        |!{product.description}
 
     if (product.createdBy.accountFullName) 
       div 

@@ -50,9 +50,11 @@ module.exports.index = async (req, res) => {
 
   const listSubCategory = await getSubCategory(category);
   const listSubCategoryId = listSubCategory.map(item => item.id);
-  
+
   if (category) {
-    find.post_category_id = {$in: [category, ...listSubCategoryId]}
+    find.post_category_id = {
+      $in: [category, ...listSubCategoryId]
+    }
   }
   //! end category
 
@@ -196,7 +198,9 @@ module.exports.changeMulti = async (req, res) => {
     case "active":
     case "inactive":
       await Post.updateMany({
-        _id: {$in: ids}
+        _id: {
+          $in: ids
+        }
       }, {
         status: type,
         $push: {
@@ -207,7 +211,9 @@ module.exports.changeMulti = async (req, res) => {
       break;
     case 'delete-all':
       await Post.updateMany({
-        _id: {$in: ids}
+        _id: {
+          $in: ids
+        }
       }, {
         deleted: true,
         deletedBy: {
@@ -217,7 +223,7 @@ module.exports.changeMulti = async (req, res) => {
       })
       req.flash('success', `Xoá ${ids.length} bài viết thành công`)
       break;
-    case "change-position": 
+    case "change-position":
       for (const item of ids) {
         const [id, position] = item.split('-')
         await Post.updateOne({
@@ -225,13 +231,13 @@ module.exports.changeMulti = async (req, res) => {
         }, {
           position: position,
           $push: {
-            updatedBy: updatedBy 
+            updatedBy: updatedBy
           }
         })
       }
       req.flash('success', `Thay đổi vị trí ${ids.length} bài viết thành công`)
       break;
-    
+
   }
 
   res.redirect('back')
@@ -251,9 +257,61 @@ module.exports.changeStatus = async (req, res) => {
     _id: id
   }, {
     status: status,
-    $push: {updatedBy: updatedBy}
+    $push: {
+      updatedBy: updatedBy
+    }
   })
 
   req.flash('success', 'Thay đổi trạng thái bài viết thành công!')
   res.redirect('back')
+}
+
+// GET /admin/posts/detail/:id
+module.exports.detail = async (req, res) => {
+  const id = req.params.id
+
+  const post = await Post.findOne({
+    _id: id,
+    deleted: false
+  })
+
+  //! get categories of post
+  const postCategories = await PostsCategory.find({
+    deleted: false
+  })
+  let categories = []
+  let categoryId = post.post_category_id
+  while (categoryId) {
+    const category = postCategories.find(item => item.id === categoryId)
+    if (category) {
+      categories.push(category)
+      categoryId = category.parent_id
+    }
+  }
+  categories.reverse()
+  post.categories = categories
+
+  //! get info update, create
+  if (post.createdBy) {
+    const userCreate = await Account.findOne({
+      _id: post.createdBy.account_id
+    })
+    if (userCreate) {
+      post.createdBy.accountFullName = userCreate.fullName
+    }
+  }
+
+  if (post.updatedBy && post.updatedBy.length > 0) {
+    const userUpdate = await Account.findOne({
+      _id: post.updatedBy.slice(-1)[0].account_id
+    })
+    if (userUpdate) {
+      post.updatedBy.slice(-1)[0].accountFullName = userUpdate.fullName
+    }
+  }
+
+  res.render(`admin/pages/posts/detail`, {
+    pageTitle: "Chi tiết bài viết",
+    post
+  })
 }

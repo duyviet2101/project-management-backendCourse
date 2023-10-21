@@ -8,6 +8,7 @@ const upload = multer();
 //!end config multer
 
 const controller = require('../../controllers/admin/post.controller')
+const validate = require('../../validates/admin/post.validate.js')
 
 
 router.get('/', controller.index)
@@ -17,6 +18,7 @@ router.get('/create', controller.create)
 router.post(
   '/create',
   upload.single('thumbnail'),
+  validate.createPost,
   uploadCloud,
   controller.createPost
 )
@@ -32,6 +34,7 @@ router.get('/edit/:id', controller.edit)
 router.patch(
   '/edit/:id', 
   upload.single('thumbnail'),
+  validate.createPost,
   uploadCloud,
   controller.editPatch
 )

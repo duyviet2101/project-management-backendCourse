@@ -315,3 +315,53 @@ module.exports.detail = async (req, res) => {
     post
   })
 }
+
+
+// GET /admin/posts/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const id = req.params.id
+
+    const post = await Post.findOne({
+      _id: id,
+      deleted: false
+    })
+  
+    const categories = await PostsCategory.find({
+      deleted: false
+    })
+  
+    res.render('admin/pages/posts/edit', {
+      pageTitle: "Chính sửa bài viết",
+      post,
+      records: createTree(categories)
+    })
+  } catch (error) {
+    req.flash('error', 'Không tồn tại bài viết!')
+    res.records(`/${prefixAdmin}/posts`)
+  }
+}
+
+
+// PATCH /admin/posts/edit/:id
+module.exports.editPatch = async (req, res) => {
+  const id = req.params.id
+
+  req.body.position = parseInt(req.body.position)
+
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: Date.now()
+  }
+
+  await Post.updateOne({
+    _id: id
+  }, {
+    ...req.body,
+    $push: {
+      updatedBy: updatedBy
+    }
+  })
+  req.flash("success", "Cập nhật bài viết thành công")
+  res.redirect(`/${prefixAdmin}/posts`);
+}

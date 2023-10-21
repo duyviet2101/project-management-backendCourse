@@ -205,3 +205,24 @@ module.exports.changeStatus = async (req, res) => {
   req.flash('success','Cập nhật trạng thái thành công!')
   res.redirect('back')
 }
+
+
+// DELETE /admin/posts-category/delete/:id
+module.exports.deleteItem = async (req, res) => {
+  const id = req.params.id
+
+  const deletedBy = {
+    account_id: res.locals.user.id,
+    deletedAt: Date.now()
+  }
+
+  await PostsCategory.updateOne({
+    _id: id
+  }, {
+    deleted: true,
+    deletedBy: deletedBy
+  })
+
+  req.flash('success', 'Xoá sản phẩm thành công!')
+  res.redirect('back')
+}

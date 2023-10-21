@@ -125,3 +125,63 @@ module.exports.detail = async (req, res) => {
     res.redirect(`/${prefixAdmin}/posts-category`);
   }
 }
+
+
+// GET /admin/posts-category/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const id = req.params.id
+    const postCategory = await PostsCategory.findOne({
+      _id: id,
+      deleted: false
+    })
+  
+    if (!postCategory) {
+      req.flash('error', 'Không tồn tại!')
+      return res.redirect(`/${prefixAdmin}/posts-category`)
+    }
+  
+    const records = await PostsCategory.find({
+      deleted: false
+    })
+  
+  
+    res.render('admin/pages/posts-category/edit', {
+      pageTitle: 'Chỉnh sửa danh mục bài viết',
+      data: postCategory,
+      records
+    })
+  } catch (error) {
+    req.flash('error', 'Không tồn tại!')
+    return res.redirect(`/${prefixAdmin}/posts-category`)
+  }
+}
+
+
+// PATCH /admin/posts-category/edit/:id
+module.exports.editPatch = async (req, res) => {
+  try {
+    const id = req.params.id
+
+    req.body.position = parseInt(req.body.position)
+
+    const updatedBy = {
+      account_id: res.locals.user.id
+    }
+
+    await PostsCategory.findOneAndUpdate({
+      _id: id
+    }, {
+      ...req.body,
+      $push: {
+        updatedBy: updatedBy
+      }
+    })
+    
+    req.flash('Cập nhật thành công!')
+    return res.redirect(`/${prefixAdmin}/posts-category`)
+  } catch (error) {
+    req.flash('Lỗi!')
+    return res.redirect(`/${prefixAdmin}/posts-category`)
+  }
+}

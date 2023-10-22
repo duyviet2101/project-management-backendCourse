@@ -1,4 +1,5 @@
 const Product = require('../../models/product.model.js')
+const Post = require('../../models/post.model.js')
 
 const productsHelper = require('../../helpers/product.js')
 
@@ -21,9 +22,23 @@ module.exports.index = async (req, res) => {
 
     const newProductsNew = productsHelper.priceNewProducts(productsNew)
 
+    //! danh sach bai viet noi bat
+    const postsFeatured = await Post.find({
+        featured: "1",
+        deleted: false,
+        status: 'active'
+    }).sort({position: 'desc'}).limit(6)
+    //! danh sach bai viet moi
+    const postsNew = await Post.find({
+        deleted: false,
+        status: 'active'
+    }).sort({position: 'desc'}).limit(6)
+
     res.render("./client/pages/home/index.pug", {
         pageTitle: 'Trang chủ',
         productsFeatured: newProductsFeatured,
-        productsNew: newProductsNew
+        productsNew: newProductsNew,
+        postsFeatured,
+        postsNew
     });
 }

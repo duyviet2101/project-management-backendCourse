@@ -1,6 +1,7 @@
 extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 include ../../mixins/product-layout.pug
+include ../../mixins/post-layout.pug
 
 block main
   .section-products-featured.my-5
@@ -10,6 +11,14 @@ block main
           +box-head("Sản phẩm nổi bật")
 
       +product-grid(productsFeatured)
+
+  .section-products-featured.my-5
+    .container
+      .row
+        .col-12
+          +box-head("Bài viết nổi bật")
+
+      +post-grid(postsFeatured)
   
   .section-products-featured.my-5
     .container
@@ -18,3 +27,11 @@ block main
           +box-head("Sản phẩm mới")
 
       +product-grid(productsNew)
+
+  .section-products-featured.my-5
+    .container
+      .row
+        .col-12
+          +box-head("Bài viết mới")
+
+      +post-grid(postsNew)

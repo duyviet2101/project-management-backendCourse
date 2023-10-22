@@ -47,7 +47,7 @@ module.exports.detail = async (req, res) => {
             return res.redirect('back')
         // console.log(product)
         res.render("client/pages/products/detail", {
-            pageTitle: 'Chi tiết sản phẩm',
+            pageTitle: product.title,
             product
         });
     } catch (error) {

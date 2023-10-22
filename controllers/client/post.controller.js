@@ -16,3 +16,22 @@ module.exports.index = async (req, res) => {
   })
   
 }
+
+// GET /posts/detail/:slug
+module.exports.detail = async (req, res) => {
+  const slug = req.params.slug
+
+  const post = await Post.findOne({
+    slug: slug,
+    deleted: false
+  }).lean()
+
+  post.category = await PostCategory.findOne({
+    _id: post.post_category_id
+  }).lean()
+
+  res.render('client/pages/posts/detail', {
+    pageTitle: post.title,
+    post
+  })
+}

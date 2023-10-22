@@ -1,3 +1,5 @@
+include moment.pug
+
 mixin post-item(item)
   .col-6.mb-3
     //- .post-item
@@ -20,5 +22,6 @@ mixin post-item(item)
             h5.card-title.inner-title
               a(href=`/posts/detail/${item.slug}`) #{item.title} 
             p.card-text #{item.preview}
-            //- p.card-text
-            //-   small.text-muted Last updated 3 mins ago
+            p.card-text
+              small.text-muted Cập nhật lần cuối 
+                +formatDateTime(item.updatedAt)

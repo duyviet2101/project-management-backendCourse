@@ -254,6 +254,23 @@
 
 /* End product-detail */
 
+/* post-detail */
+.post-detail .inner-thumb img {
+    width: 100%;
+    height: auto;
+}
+
+.post-detail .inner-title {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.post-detail .inner-category {
+    margin-bottom: 10px;
+}
+
+/* End post-detail */
+
 
 /* Show Alert */
 [show-alert] {

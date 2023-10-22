@@ -363,7 +363,7 @@ module.exports.editPatch = async (req, res) => {
     }
   })
   req.flash("success", "Cập nhật bài viết thành công")
-  res.redirect(`/${prefixAdmin}/posts`);
+  res.redirect(`back`);
 }
 
 // DELETE /admin/posts/delete/:id

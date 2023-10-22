@@ -1,6 +1,6 @@
 include product-item.pug
 
-mixin product-grid(products)
+mixin product-grid(items)
   .row
-    each item in products
+    each item in items
       +product-item(item)

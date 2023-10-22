@@ -1,0 +1,24 @@
+mixin post-item(item)
+  .col-6.mb-3
+    //- .post-item
+    //-   .inner-image
+    //-     img(src=item.thumbnail, alt=item.title)
+    //-     if(item.featured == "1")
+    //-       .inner-featured Nổi bật
+    //-   .inner-content
+    //-     h3.inner-title
+    //-       a(href=`/posts/detail/${item.slug}`) #{item.title}
+    .card.mb-3.post-item(style='max-width: 540px;')
+      .row.no-gutters
+        .col-md-4.inner-image
+          a(href=`/posts/detail/${item.slug}`)
+            img(src=item.thumbnail alt=item.title)
+          if(item.featured == "1")
+            .inner-featured Nổi bật
+        .col-md-8
+          .card-body.inner-content
+            h5.card-title.inner-title
+              a(href=`/posts/detail/${item.slug}`) #{item.title} 
+            p.card-text #{item.preview}
+            //- p.card-text
+            //-   small.text-muted Last updated 3 mins ago

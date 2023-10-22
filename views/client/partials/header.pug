@@ -36,6 +36,11 @@ header.header
               a(href=pathProduct) Sản phẩm
               if(layoutCategoryProducts)
                 +sub-menu(layoutCategoryProducts, pathProduct)
+            li(class="sub-menu")
+              - const pathPosts = "/posts";
+              a(href=pathPosts) Bài viết
+              if(layoutCategoryPosts)
+                +sub-menu(layoutCategoryPosts, pathPosts)
             li 
               a(href="/cart") Giỏ hàng (#{miniCart ? miniCart.totalQuantity : "0"})
             if(user)

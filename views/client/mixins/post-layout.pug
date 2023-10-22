@@ -1,0 +1,6 @@
+include post-item.pug
+
+mixin post-grid(items)
+  .row
+    each item in items
+      +post-item(item)

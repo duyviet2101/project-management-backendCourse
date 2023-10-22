@@ -10,5 +10,22 @@ module.exports.createPost = (req, res, next) => {
     res.redirect('back')
     return
   }
+
+  if (req.body.preview && req.body.preview.length > 0) {
+    const countWords = req.body.preview.split(' ').length
+
+    if (countWords > 30) {
+      req.flash("error", `Preview không quá 30 từ!`)
+      res.redirect('back')
+      return
+    }
+
+    if (countWords < 10) {
+      req.flash("error", `Preview tối thiểu 10 từ!`)
+      res.redirect('back')
+      return
+    }
+  }
+  
   next()
 }

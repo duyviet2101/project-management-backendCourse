@@ -52,6 +52,15 @@ block main
         )
         label(for="featured0" class="form-check-label") Không nổi bật
       div(class="form-group")
+        label(for="preview") Preview
+        textarea(
+          class="form-control"
+          id="preview"
+          name="preview"
+          rows="3"
+          placeholder="Tối thiểu 10 từ, tối đa 30 từ"
+        ) #{post.preview}
+      div(class="form-group")
         label(for="desc") Nội dung
         textarea(
           class="form-control textarea-mce"

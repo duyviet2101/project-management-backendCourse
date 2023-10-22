@@ -8,6 +8,7 @@ const postSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+  preview: String,
   content: String,
   thumbnail: String,
   status: String,

@@ -38,6 +38,11 @@ block main
 
     if (post.position)
       div(class="mb-4") Vị trí: <b>#{post.position}</b>
+    
+    if (post.preview)
+      div(class="mb-4")
+        | Preview: 
+        |!{post.preview}
 
     if (post.content)
       div(class="mb-4")

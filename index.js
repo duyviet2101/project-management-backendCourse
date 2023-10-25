@@ -50,6 +50,19 @@ app.use(bodyPraser.urlencoded({extended: true}))
 // Routes
 route(app);
 routeAdmin(app);
+app.use((err, req, res, next) => {
+    if (err) {
+        res.render("client/pages/errors/404", {
+            pageTitle: "404 Not Found",
+        })
+    }
+})
+app.get("*", (req, res) => {
+    res.render("client/pages/errors/404", {
+      pageTitle: "404 Not Found",
+    });
+  });
+  
 
 app.listen(port, () => {
     console.log(`App listening on http://127.0.0.1:${port}`)

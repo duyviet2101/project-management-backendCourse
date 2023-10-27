@@ -9,6 +9,9 @@ const session = require('express-session')
 const morgan = require('morgan')
 const path = require('path')
 const moment = require('moment')
+const {Server} = require('socket.io')
+const http = require('http')
+
 
 database.connect()
 
@@ -34,6 +37,18 @@ app.use(methodOverride('_method'))
 
 //! config static file
 app.use(express.static(`${__dirname}/public`));
+
+//! config socket.io
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+    console.log('a user connected:::', socket.id);
+    socket.on('disconnect', () => {
+      console.log('user disconnected:::', socket.id);
+    })
+});
+
 
 //! config express flash
 app.use(cookieParser('...'));
@@ -64,6 +79,6 @@ app.get("*", (req, res) => {
   });
   
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`App listening on http://127.0.0.1:${port}`)
 })

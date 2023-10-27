@@ -41,14 +41,7 @@ app.use(express.static(`${__dirname}/public`));
 //! config socket.io
 const server = http.createServer(app);
 const io = new Server(server);
-
-io.on('connection', (socket) => {
-    console.log('a user connected:::', socket.id);
-    socket.on('disconnect', () => {
-      console.log('user disconnected:::', socket.id);
-    })
-});
-
+global._io = io;
 
 //! config express flash
 app.use(cookieParser('...'));

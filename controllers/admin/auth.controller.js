@@ -5,6 +5,11 @@ const { prefixAdmin } = require('../../config/system.js')
 
 // [GET] /admin/auth/login
 module.exports.login = async (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    res.redirect(`/${prefixAdmin}/dashboard`)
+    return
+  }
   res.render('admin/pages/auth/login', {
     pageTitle: "Đăng nhập"
   })

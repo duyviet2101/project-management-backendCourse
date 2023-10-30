@@ -90,8 +90,9 @@ if (emojiPicker) {
     showTyping()
   });
 
-  inputChat.addEventListener('keyup', () => {
-    showTyping()
+  inputChat.addEventListener('keyup', (e) => {
+    if (e.key != 'Enter')
+      showTyping()
   })
 }
 //! end emoji-picker

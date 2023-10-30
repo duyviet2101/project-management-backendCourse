@@ -16,8 +16,8 @@ block main
           //-   .inner-name Em Yêu
           .inner-body
             each chat in chats
-              div(class=(chat.infoUser.id == user.id) ? "inner-outgoing" : "inner-incoimg")
-                if (chat.infoUser.id != user.id)
+              div(class=(chat.infoUser.id == user.id ? "inner-outgoing" : "inner-incoming"))
+                if(chat.infoUser.id != user.id)
                   .inner-name #{chat.infoUser.fullName}
                 .inner-content
                   | #{chat.content}

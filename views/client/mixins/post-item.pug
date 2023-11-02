@@ -14,7 +14,7 @@ mixin post-item(item)
       .row.no-gutters
         .col-md-4.inner-image
           a(href=`/posts/detail/${item.slug}`)
-            img(src=item.thumbnail alt=item.title)
+            img(src=item.thumbnail alt=item.title style="width: 100%;")
           if(item.featured == "1")
             .inner-featured Nổi bật
         .col-md-8

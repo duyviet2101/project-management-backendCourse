@@ -19,7 +19,7 @@ router.post(
   '/create',
   upload.single('thumbnail'),
   validate.createPost,
-  uploadCloud,
+  uploadCloud.upload,
   controller.createPost
 )
 
@@ -35,7 +35,7 @@ router.patch(
   '/edit/:id', 
   upload.single('thumbnail'),
   validate.createPost,
-  uploadCloud,
+  uploadCloud.upload,
   controller.editPatch
 )
 

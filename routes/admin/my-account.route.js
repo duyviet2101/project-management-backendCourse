@@ -15,7 +15,7 @@ router.get('/edit', controller.edit)
 router.patch(
   '/edit', 
   upload.single("avatar"),
-  uploadCloud,
+  uploadCloud.upload,
   controller.editPatch
 )
 

@@ -15,7 +15,7 @@ router.get('/general', controller.general)
 router.patch(
   '/general',
   upload.single('logo'),
-  uploadCloud, 
+  uploadCloud.upload, 
   controller.generalPatch
 )
 

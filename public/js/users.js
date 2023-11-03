@@ -42,3 +42,18 @@ if (listBtnRefuseFriend && listBtnRefuseFriend.length > 0) {
   })
 }
 // ! end từ chối yêu cầu kết bạn
+
+// ! chấp nhận yêu cầu kết bạn
+const listBtnAcceptFriend = document.querySelectorAll('[btn-accept-friend]');
+if (listBtnAcceptFriend && listBtnAcceptFriend.length > 0) {
+  listBtnAcceptFriend.forEach(button => {
+    button.addEventListener('click', () => {
+      button.closest('.box-user').classList.add('accepted')
+
+      const userId = button.getAttribute('btn-accept-friend')
+      
+      socket.emit('CLIENT_ACCEPT_FRIEND', userId)
+    })
+  })
+}
+// ! end chấp nhận yêu cầu kết bạn

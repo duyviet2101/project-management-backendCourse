@@ -7,7 +7,7 @@ const User = require('../../models/user.model.js')
 module.exports = async (res) => {
   // !socket.io
   _io.once('connection', (socket) => {
-    // Nguoi dung gui yeu cau ket ban
+    //! Nguoi dung gui yeu cau ket ban
     socket.on('CLIENT_ADD_FRIEND', async (userId) => {
       const myUserId = res.locals.user.id;
       // console.log(myUserId) //id cua user da dang nhap - A
@@ -42,7 +42,7 @@ module.exports = async (res) => {
         })
       }
     })
-    // Nguoi dung huy yeu cau ket ban
+    //! Nguoi dung huy yeu cau ket ban
     socket.on('CLIENT_CANCEL_FRIEND', async (userId) => {
       const myUserId = res.locals.user.id;
       // console.log(myUserId) //id cua user da dang nhap - A
@@ -67,7 +67,7 @@ module.exports = async (res) => {
       })
     })
 
-    // Nguoi dung tu choi ket ban
+    //! Nguoi dung tu choi ket ban
     socket.on('CLIENT_REFUSE_FRIEND', async (userId) => {
       const myUserId = res.locals.user.id;
       // console.log(myUserId) //id cua B
@@ -91,6 +91,62 @@ module.exports = async (res) => {
         }
       })
     })
+
+    //! Nguoi dung chap nhan ket ban
+    socket.on("CLIENT_ACCEPT_FRIEND", async (userId) => {
+      const myUserId = res.locals.user.id;
+
+      // console.log(myUserId) // Id của B
+      // console.log(userId); // Id của A
+
+
+      //? Thêm {user_id, room_chat_id} của A vào friendsList của B
+      //? Xóa id của A trong acceptFriends của B
+      const existUserAInB = await User.findOne({
+        _id: myUserId,
+        acceptFriends: userId
+      });
+
+      if (existUserAInB) {
+        await User.updateOne({
+          _id: myUserId
+        }, {
+          $push: {
+            friendList: {
+              user_id: userId,
+              room_chat_id: ""
+            }
+          },
+          $pull: {
+            acceptFriends: userId
+          }
+        });
+      }
+
+
+      //? Thêm {user_id, room_chat_id} của B vào friendsList của A
+      //? Xóa id của B trong requestFriends của A
+      const existUserBInA = await User.findOne({
+        _id: userId,
+        requestFriends: myUserId
+      });
+
+      if (existUserBInA) {
+        await User.updateOne({
+          _id: userId
+        }, {
+          $push: {
+            friendList: {
+              user_id: myUserId,
+              room_chat_id: ""
+            }
+          },
+          $pull: {
+            requestFriends: myUserId
+          }
+        });
+      }
+    });
   })
   // !end socket.io
 }

@@ -66,6 +66,31 @@ module.exports = async (res) => {
         }
       })
     })
+
+    // Nguoi dung tu choi ket ban
+    socket.on('CLIENT_REFUSE_FRIEND', async (userId) => {
+      const myUserId = res.locals.user.id;
+      // console.log(myUserId) //id cua B
+      // console.log(userId) //id cua A
+
+      //? xoá id của A trong acceptFriends của B
+      await User.findOneAndUpdate({
+        _id: myUserId
+      }, {
+        $pull: {
+          acceptFriends: userId
+        }
+      })
+
+      //? xoá id của B trong requestFriends của A
+      await User.findOneAndUpdate({
+        _id: userId
+      }, {
+        $pull: {
+          requestFriends: myUserId
+        }
+      })
+    })
   })
   // !end socket.io
 }

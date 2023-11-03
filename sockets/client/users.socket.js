@@ -7,6 +7,7 @@ const User = require('../../models/user.model.js')
 module.exports = async (res) => {
   // !socket.io
   _io.once('connection', (socket) => {
+    // Nguoi dung gui yeu cau ket ban
     socket.on('CLIENT_ADD_FRIEND', async (userId) => {
       const myUserId = res.locals.user.id;
       // console.log(myUserId) //id cua user da dang nhap - A
@@ -41,7 +42,30 @@ module.exports = async (res) => {
         })
       }
     })
+    // Nguoi dung huy yeu cau ket ban
+    socket.on('CLIENT_CANCEL_FRIEND', async (userId) => {
+      const myUserId = res.locals.user.id;
+      // console.log(myUserId) //id cua user da dang nhap - A
+      // console.log(userId) //id cua user muon ket ban - B
 
+      //? xoá id của A vào acceptFriends của B
+      await User.findOneAndUpdate({
+        _id: userId
+      }, {
+        $pull: {
+          acceptFriends: myUserId
+        }
+      })
+
+      //? xoá id của B vào requestFriends của A
+      await User.findOneAndUpdate({
+        _id: myUserId
+      }, {
+        $pull: {
+          requestFriends: userId
+        }
+      })
+    })
   })
   // !end socket.io
 }

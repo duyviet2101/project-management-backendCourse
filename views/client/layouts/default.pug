@@ -7,7 +7,7 @@ html
         link(rel="stylesheet", href="/css/style.css")
         //- file upload with preview
         link(rel="stylesheet", href="https://unpkg.com/file-upload-with-preview/dist/style.css")
-
+        link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.css")
     body 
         include ../partials/header.pug
 
@@ -22,5 +22,6 @@ html
             //- SocketIO
         script(src="/socket.io/socket.io.js")
         script(src="/js/socket.js") 
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.js") 
         script(type="module" src="/js/chat.js") 
         script(src="/js/script.js") 

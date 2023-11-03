@@ -74,6 +74,12 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
   body.insertBefore(div, boxTyping);
 
   body.scrollTop = body.scrollHeight;
+
+  // ! preview image
+  const boxImages = div.querySelector('.inner-images')
+  if (boxImages && boxImages.children.length > 0) {
+    const gallery = new Viewer(boxImages)
+  }
 });
 //! End SERVER_RETURN_MESSAGE
 
@@ -107,7 +113,7 @@ if (buttonIcon) {
   buttonIcon.onclick = () => {
     tooltip.classList.toggle('shown');
   }
-}
+} 
 
 //? insert icon to input
 const emojiPicker = document.querySelector("emoji-picker");
@@ -164,3 +170,10 @@ if (elementListTyping) {
   })
 }
 //! END SERVER_RETURN_TYPING
+
+// ! preview image
+const chatBody = document.querySelector('.chat .inner-body');
+if (chatBody) {
+  const gallery = new Viewer(chatBody)
+}
+// ! end preview image

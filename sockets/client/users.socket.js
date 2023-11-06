@@ -41,6 +41,17 @@ module.exports = async (res) => {
           }
         })
       }
+
+      //! lấy độ dài acceptFriends của B
+      const infoUserB = await User.findOne({
+        _id: userId
+      }).lean()
+
+      const lengthAcceptFriends = infoUserB.acceptFriends.length;
+      socket.broadcast.emit('SERVER_RETURN_LENGTH_ACCEPT_FRIEND', {
+        userId,
+        lengthAcceptFriends
+      })
     })
     //! Nguoi dung huy yeu cau ket ban
     socket.on('CLIENT_CANCEL_FRIEND', async (userId) => {

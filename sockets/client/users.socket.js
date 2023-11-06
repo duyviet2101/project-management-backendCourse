@@ -95,6 +95,12 @@ module.exports = async (res) => {
         userId,
         lengthAcceptFriends
       })
+
+      //! lấy userId của A để trả về cho B khi A huỷ kết bạn 
+      socket.broadcast.emit('SERVER_RETURN_USER_ID_CANCEL_FRIEND', {
+        userId,
+        userIdA: myUserId
+      })
     })
 
     //! Nguoi dung tu choi ket ban

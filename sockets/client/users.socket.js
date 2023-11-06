@@ -52,6 +52,15 @@ module.exports = async (res) => {
         userId,
         lengthAcceptFriends
       })
+
+      //! lấy thông tin của A trả về cho B
+      const infoUserA = await User.findOne({
+        _id: myUserId
+      }).select("id avatar fullName").lean()
+      socket.broadcast.emit('SERVER_RETURN_INFO_ACCEPT_FRIEND', {
+        userId,
+        infoUserA
+      })
     })
     //! Nguoi dung huy yeu cau ket ban
     socket.on('CLIENT_CANCEL_FRIEND', async (userId) => {

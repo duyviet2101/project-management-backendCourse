@@ -523,6 +523,18 @@
     display: inline-block;
 }
 
+.box-user.deleted [btn-delete-friend] {
+    display: none;
+}
+
+.box-user.deleted [btn-chat] {
+    display: none;
+}
+
+.box-user.deleted [btn-deleted-friend] {
+    display: inline-block;
+}
+
 .box-user .inner-status {
     font-size: 12px;
     color: #00d800;

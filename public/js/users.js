@@ -58,6 +58,21 @@ if (listBtnAcceptFriend && listBtnAcceptFriend.length > 0) {
 }
 // ! end chấp nhận yêu cầu kết bạn 
 
+// ! từ chối yêu cầu kết bạn
+const listBtnDeleteFriend = document.querySelectorAll('[btn-delete-friend]');
+if (listBtnDeleteFriend && listBtnDeleteFriend.length > 0) {
+  listBtnDeleteFriend.forEach(button => {
+    button.addEventListener('click', () => {
+      button.closest('.box-user').classList.add('deleted')
+
+      const userId = button.getAttribute('btn-delete-friend')
+      
+      socket.emit('CLIENT_DELETE_FRIEND', userId)
+    })
+  })
+}
+// ! end từ chối yêu cầu kết bạn
+
 //! SERVER_RETURN_LENGTH_ACCEPT_FRIEND
 socket.on("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", (data) => {
   const badgeUserAccept = document.querySelector(`[badge-user-accept]`)

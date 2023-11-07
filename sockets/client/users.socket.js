@@ -187,6 +187,36 @@ module.exports = async (res) => {
         });
       }
     });
+
+    // ! Nguoi dung xoa ban be
+    socket.on("CLIENT_DELETE_FRIEND", async (userId) => {
+      const myUserId = res.locals.user.id;
+
+      // console.log(myUserId) // Id của A
+      // console.log(userId); // Id của B
+
+      //? Xoá id của A trong friendsList của B
+      await User.findOneAndUpdate({
+        _id: myUserId
+      }, {
+        $pull: {
+          friendList: {
+            user_id: userId
+          }
+        }
+      });
+
+      //? Xoá id của B trong friendsList của A
+      await User.findOneAndUpdate({
+        _id: userId
+      }, {
+        $pull: {
+          friendList: {
+            user_id: myUserId
+          }
+        }
+      });
+    })
   })
   // !end socket.io
 }

@@ -25,7 +25,17 @@ block main
                 a(
                   href="#"
                   class="btn btn-sm btn-primary mr-1"
+                  btn-chat
                 ) Nhắn tin
+                button(
+                  btn-delete-friend=user.id
+                  class="btn btn-sm btn-danger mr-1"
+                ) Xoá bạn
+                button(
+                  class="btn btn-sm btn-secondary mr-1"
+                  btn-deleted-friend
+                  disabled
+                ) Đã xóa
             div(
               class="inner-status"
               status=user.statusOnline

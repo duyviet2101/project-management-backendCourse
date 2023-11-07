@@ -97,9 +97,13 @@ module.exports = async (res) => {
       })
 
       //! lấy userId của A để trả về cho B khi A huỷ kết bạn 
+      const infoUserA = await User.findOne({
+        _id: myUserId
+      }).select("id fullName avatar").lean()
       socket.broadcast.emit('SERVER_RETURN_USER_ID_CANCEL_FRIEND', {
         userId,
-        userIdA: myUserId
+        userIdA: myUserId,
+        infoUserA
       })
     })
 

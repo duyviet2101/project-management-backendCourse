@@ -36,6 +36,10 @@ block main
                   btn-deleted-friend
                   disabled
                 ) Đã xóa
+                button(
+                  btn-undo-delete-friend=user.id
+                  class="btn btn-sm btn-primary mr-1"
+                ) Hoàn tác
             div(
               class="inner-status"
               status=user.statusOnline

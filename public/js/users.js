@@ -58,20 +58,43 @@ if (listBtnAcceptFriend && listBtnAcceptFriend.length > 0) {
 }
 // ! end chấp nhận yêu cầu kết bạn 
 
-// ! từ chối yêu cầu kết bạn
+// ! xoá kết bạn
 const listBtnDeleteFriend = document.querySelectorAll('[btn-delete-friend]');
+const listBtnUndoDeleteFriend = document.querySelectorAll('[btn-undo-delete-friend]');
 if (listBtnDeleteFriend && listBtnDeleteFriend.length > 0) {
-  listBtnDeleteFriend.forEach(button => {
+  listBtnDeleteFriend.forEach((button, index) => {
     button.addEventListener('click', () => {
       button.closest('.box-user').classList.add('deleted')
 
-      const userId = button.getAttribute('btn-delete-friend')
-      
-      socket.emit('CLIENT_DELETE_FRIEND', userId)
+      if (listBtnUndoDeleteFriend[index]) {
+        const btnUndo = listBtnUndoDeleteFriend[index]
+
+        let sec = 5;
+        btnUndo.innerHTML = `Hoàn tác (${sec})`
+        const undoCountDown = setInterval(() => {
+          sec--;
+          if (sec >= 0) {
+            btnUndo.innerHTML = `Hoàn tác (${sec})`
+          } else {
+            clearInterval(undoCountDown)
+          }
+        }, 1000)
+        const unfriendCountDown = setTimeout(() => {
+          const userId = button.getAttribute('btn-delete-friend')
+          socket.emit('CLIENT_DELETE_FRIEND', userId)
+          btnUndo.setAttribute('disabled', 'disabled')
+        }, 5000)
+        btnUndo.addEventListener('click', () => {
+          clearTimeout(unfriendCountDown)
+          clearInterval(undoCountDown)
+          button.closest('.box-user').classList.remove('deleted')
+        })
+      }
+
     })
   })
 }
-// ! end từ chối yêu cầu kết bạn
+// ! end xoá kết bạn
 
 //! SERVER_RETURN_LENGTH_ACCEPT_FRIEND
 socket.on("SERVER_RETURN_LENGTH_ACCEPT_FRIEND", (data) => {

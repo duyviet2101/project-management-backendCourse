@@ -216,6 +216,12 @@ module.exports = async (res) => {
           }
         }
       });
+
+      //! xoá A trong danh sách bạn bè của B khi A huỷ kết bạn
+      socket.broadcast.emit('SERVER_RETURN_USER_ID_DELETE_FRIEND', {
+        userId,
+        userIdA: myUserId
+      })
     })
   })
   // !end socket.io

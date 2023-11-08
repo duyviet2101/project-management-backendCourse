@@ -233,3 +233,19 @@ socket.on('SERVER_RETURN_USER_ID_CANCEL_FRIEND', (data) => {
   //? hết trang danh sách người dùng
 })
 //! END SERVER_RETURN_USER_ID_CANCEL_FRIEND
+
+//! SERVER_RETURN_USER_ID_DELETE_FRIEND
+socket.on('SERVER_RETURN_USER_ID_DELETE_FRIEND', (data) => {
+  const dataUsersFriend = document.querySelector(`[data-users-friend]`)
+  if (dataUsersFriend) {
+    const userId = dataUsersFriend.getAttribute('data-users-friend')
+    if (data.userId == userId) {
+      //? Xoá a khỏi danh sách bạn bè của b
+      const boxUserRemove = dataUsersFriend.querySelector(`[user-id="${data.userIdA}"]`)
+      if (boxUserRemove) {
+        dataUsersFriend.removeChild(boxUserRemove)
+      }
+    }
+  }
+})
+//! END SERVER_RETURN_USER_ID_DELETE_FRIEND

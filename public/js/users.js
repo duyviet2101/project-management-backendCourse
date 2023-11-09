@@ -59,38 +59,48 @@ if (listBtnAcceptFriend && listBtnAcceptFriend.length > 0) {
 // ! end chấp nhận yêu cầu kết bạn 
 
 // ! xoá kết bạn
+
+const undoDeleteFriend = (userId, button, index) => {
+  if (listBtnUndoDeleteFriend[index]) {
+    const btnUndo = listBtnUndoDeleteFriend[index]
+
+    let sec = 5;
+    btnUndo.innerHTML = `Hoàn tác (${sec})`
+    const undoCountDown = setInterval(() => {
+      sec--;
+      if (sec >= 0) {
+        btnUndo.innerHTML = `Hoàn tác (${sec})`
+      } else {
+        clearInterval(undoCountDown)
+      }
+    }, 1000)
+
+    const unfriendCountDown = setTimeout(() => {
+      btnUndo.setAttribute('disabled', 'disabled')
+    }, 5000)
+
+    let cnt = 0;
+    btnUndo.addEventListener('click', function undo() {
+      clearTimeout(unfriendCountDown)
+      clearInterval(undoCountDown)
+      button.closest('.box-user').classList.remove('deleted')
+      socket.emit('CLIENT_UNDO_DELETE_FRIEND', userId)
+      btnUndo.removeEventListener('click', undo)
+      return;
+    })
+  }
+}
+
 const listBtnDeleteFriend = document.querySelectorAll('[btn-delete-friend]');
 const listBtnUndoDeleteFriend = document.querySelectorAll('[btn-undo-delete-friend]');
 if (listBtnDeleteFriend && listBtnDeleteFriend.length > 0) {
   listBtnDeleteFriend.forEach((button, index) => {
     button.addEventListener('click', () => {
       button.closest('.box-user').classList.add('deleted')
+      const userId = button.getAttribute('btn-delete-friend')
+      socket.emit('CLIENT_DELETE_FRIEND', userId)
 
-      if (listBtnUndoDeleteFriend[index]) {
-        const btnUndo = listBtnUndoDeleteFriend[index]
-
-        let sec = 5;
-        btnUndo.innerHTML = `Hoàn tác (${sec})`
-        const undoCountDown = setInterval(() => {
-          sec--;
-          if (sec >= 0) {
-            btnUndo.innerHTML = `Hoàn tác (${sec})`
-          } else {
-            clearInterval(undoCountDown)
-          }
-        }, 1000)
-        const unfriendCountDown = setTimeout(() => {
-          const userId = button.getAttribute('btn-delete-friend')
-          socket.emit('CLIENT_DELETE_FRIEND', userId)
-          btnUndo.setAttribute('disabled', 'disabled')
-        }, 5000)
-        btnUndo.addEventListener('click', () => {
-          clearTimeout(unfriendCountDown)
-          clearInterval(undoCountDown)
-          button.closest('.box-user').classList.remove('deleted')
-        })
-      }
-
+      undoDeleteFriend(userId, button, index)
     })
   })
 }
@@ -272,3 +282,9 @@ socket.on('SERVER_RETURN_USER_ID_DELETE_FRIEND', (data) => {
   }
 })
 //! END SERVER_RETURN_USER_ID_DELETE_FRIEND
+
+//! SERVER_RETURN_INFO_USER_ACCEPTED_FRIEND
+socket.on('SERVER_RETURN_INFO_USER_ACCEPTED_FRIEND', (data) => {
+  console.log(data)
+})
+//! END SERVER_RETURN_INFO_USER_ACCEPTED_FRIEND

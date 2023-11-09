@@ -132,7 +132,7 @@ module.exports = async (res) => {
       })
     })
 
-    //! Nguoi dung chap nhan ket ban
+    //! Nguoi dung chap nhan ket ban (A gửi lời mời cho B, B chấp nhận lời mời của A)
     socket.on("CLIENT_ACCEPT_FRIEND", async (userId) => {
       const myUserId = res.locals.user.id;
 
@@ -186,6 +186,15 @@ module.exports = async (res) => {
           }
         });
       }
+
+      // //? return về thông tin của B cho A để add vào danh sách bạn bè của A
+      // const myUserInfo = await User.findOne({
+      //   _id: myUserId
+      // }).select("id fullName avatar").lean();
+      // socket.broadcast.emit('SERVER_RETURN_INFO_USER_ACCEPTED_FRIEND', {
+      //   userId,
+      //   infoUserB: myUserInfo
+      // })
     });
 
     // ! Nguoi dung xoa ban be
@@ -195,33 +204,42 @@ module.exports = async (res) => {
       // console.log(myUserId) // Id của A
       // console.log(userId); // Id của B
 
-      //? Xoá id của A trong friendsList của B
-      await User.findOneAndUpdate({
-        _id: myUserId
-      }, {
-        $pull: {
-          friendList: {
-            user_id: userId
+      const unfriendCountDown = setTimeout(async () => {
+        //? Xoá id của A trong friendsList của B
+        await User.findOneAndUpdate({
+          _id: myUserId
+        }, {
+          $pull: {
+            friendList: {
+              user_id: userId
+            }
           }
-        }
-      });
+        });
 
-      //? Xoá id của B trong friendsList của A
-      await User.findOneAndUpdate({
-        _id: userId
-      }, {
-        $pull: {
-          friendList: {
-            user_id: myUserId
+        //? Xoá id của B trong friendsList của A
+        await User.findOneAndUpdate({
+          _id: userId
+        }, {
+          $pull: {
+            friendList: {
+              user_id: myUserId
+            }
           }
+        });
+        //! xoá A trong danh sách bạn bè của B khi A huỷ kết bạn
+        socket.broadcast.emit('SERVER_RETURN_USER_ID_DELETE_FRIEND', {
+          userId,
+          userIdA: myUserId
+        })
+      }, 5000)
+      let cnt = 0;
+      socket.on('CLIENT_UNDO_DELETE_FRIEND', function undo (id) {
+        if (id === userId) {
+          clearTimeout(unfriendCountDown)
         }
-      });
-
-      //! xoá A trong danh sách bạn bè của B khi A huỷ kết bạn
-      socket.broadcast.emit('SERVER_RETURN_USER_ID_DELETE_FRIEND', {
-        userId,
-        userIdA: myUserId
+        socket.off('CLIENT_UNDO_DELETE_FRIEND', undo)
       })
+
     })
   })
   // !end socket.io

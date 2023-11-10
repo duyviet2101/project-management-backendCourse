@@ -60,10 +60,7 @@ if (listBtnAcceptFriend && listBtnAcceptFriend.length > 0) {
 
 // ! xoá kết bạn
 
-const undoDeleteFriend = (userId, button, index) => {
-  if (listBtnUndoDeleteFriend[index]) {
-    const btnUndo = listBtnUndoDeleteFriend[index]
-
+const undoDeleteFriend = (userId, button, btnUndo) => {
     let sec = 5;
     btnUndo.innerHTML = `Hoàn tác (${sec})`
     const undoCountDown = setInterval(() => {
@@ -88,7 +85,6 @@ const undoDeleteFriend = (userId, button, index) => {
       btnUndo.removeEventListener('click', undo)
       return;
     })
-  }
 }
 
 const listBtnDeleteFriend = document.querySelectorAll('[btn-delete-friend]');
@@ -100,7 +96,10 @@ if (listBtnDeleteFriend && listBtnDeleteFriend.length > 0) {
       const userId = button.getAttribute('btn-delete-friend')
       socket.emit('CLIENT_DELETE_FRIEND', userId)
 
-      undoDeleteFriend(userId, button, index)
+      if (listBtnUndoDeleteFriend[index]) {
+        const btnUndo = listBtnUndoDeleteFriend[index]
+        undoDeleteFriend(userId, button, btnUndo)
+      }
     })
   })
 }
@@ -285,7 +284,48 @@ socket.on('SERVER_RETURN_USER_ID_DELETE_FRIEND', (data) => {
 
 //! SERVER_RETURN_INFO_USER_ACCEPTED_FRIEND
 socket.on('SERVER_RETURN_INFO_USER_ACCEPTED_FRIEND', (data) => {
-  console.log(data)
+  const dataUsersFriend = document.querySelector(`[data-users-friend]`)
+  if (dataUsersFriend) {
+    //? vẽ user ra giao diện
+    const userId = dataUsersFriend.getAttribute('data-users-friend')
+    if (userId == data.userId) {
+      //? vẽ user ra giao diện
+      const newBoxUser = document.createElement('div')
+      newBoxUser.classList.add('col-6')
+      newBoxUser.setAttribute('user-id', data.infoUserB._id)
+  
+      newBoxUser.innerHTML = `
+        <div class="box-user">
+          <div class="inner-avatar">
+            <img src="${data.infoUserB.avatar ? data.infoUserB.avatar : '/images/avatar.jpg'}" alt="${data.infoUserB.fullName}">
+          </div>
+          <div class="inner-info">
+            <div class="inner-name">${data.infoUserB.fullName}</div>
+            <div class="inner-buttons">
+              <a href="#" class="btn btn-sm btn-primary mr-1" btn-chat>Nhắn tin</a>
+              <button class="btn btn-sm btn-danger mr-1" btn-delete-friend="${data.infoUserB._id}">Xoá bạn</button>
+              <button class="btn btn-sm btn-secondary mr-1" btn-deleted-friend disable>Đã xoá</button>
+              <button class="btn btn-sm btn-primary mr-1" btn-undo-delete-friend="${data.infoUserB._id}">Hoàn tác</button>
+            </div>
+          </div>
+        </div>
+      `;
+      dataUsersFriend.appendChild(newBoxUser)
+      //? end vẽ user ra giao diện
+      
+      //? xoá kết bạn
+      const buttonDeleteFriend = newBoxUser.querySelector('[btn-delete-friend]')
+      buttonDeleteFriend.addEventListener('click', () => {
+        buttonDeleteFriend.closest('.box-user').classList.add('deleted')
+        const userId = buttonDeleteFriend.getAttribute('btn-delete-friend')
+        socket.emit('CLIENT_DELETE_FRIEND', userId)
+  
+        const btnUndo = newBoxUser.querySelector('[btn-undo-delete-friend]')
+        undoDeleteFriend(userId, buttonDeleteFriend, btnUndo)
+      })
+    }
+
+  }
 })
 //! END SERVER_RETURN_INFO_USER_ACCEPTED_FRIEND
 

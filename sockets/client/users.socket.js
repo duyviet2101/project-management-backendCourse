@@ -3,6 +3,7 @@ const {
 } = require('../../helpers/uploadToCloudDinary.js')
 const Chat = require('../../models/chat.model.js')
 const User = require('../../models/user.model.js')
+const RoomChat = require('../../models/room-chat.model.js')
 
 module.exports = async (res) => {
   // !socket.io
@@ -139,14 +140,34 @@ module.exports = async (res) => {
       // console.log(myUserId) // Id của B
       // console.log(userId); // Id của A
 
-
-      //? Thêm {user_id, room_chat_id} của A vào friendsList của B
-      //? Xóa id của A trong acceptFriends của B
+      //? Tạo phòng chat 
       const existUserAInB = await User.findOne({
         _id: myUserId,
         acceptFriends: userId
       });
+      const existUserBInA = await User.findOne({
+        _id: userId,
+        requestFriends: myUserId
+      });
+      let roomChat;
+      if(existUserAInB && existUserBInA) {
+        roomChat = await RoomChat.create({
+          typeRoom: "friend",
+          users: [
+            {
+              user_id: userId,
+              role: 'superAdmin'
+            },
+            {
+              user_id: myUserId,
+              role: 'superAdmin'
+            }
+          ]
+        })
+      }
 
+      //? Thêm {user_id, room_chat_id} của A vào friendsList của B
+      //? Xóa id của A trong acceptFriends của B
       if (existUserAInB) {
         await User.updateOne({
           _id: myUserId
@@ -154,7 +175,7 @@ module.exports = async (res) => {
           $push: {
             friendList: {
               user_id: userId,
-              room_chat_id: ""
+              room_chat_id: roomChat.id
             }
           },
           $pull: {
@@ -166,11 +187,6 @@ module.exports = async (res) => {
 
       //? Thêm {user_id, room_chat_id} của B vào friendsList của A
       //? Xóa id của B trong requestFriends của A
-      const existUserBInA = await User.findOne({
-        _id: userId,
-        requestFriends: myUserId
-      });
-
       if (existUserBInA) {
         await User.updateOne({
           _id: userId
@@ -178,7 +194,7 @@ module.exports = async (res) => {
           $push: {
             friendList: {
               user_id: myUserId,
-              room_chat_id: ""
+              room_chat_id: roomChat.id
             }
           },
           $pull: {
@@ -187,14 +203,14 @@ module.exports = async (res) => {
         });
       }
 
-      // //? return về thông tin của B cho A để add vào danh sách bạn bè của A
-      // const myUserInfo = await User.findOne({
-      //   _id: myUserId
-      // }).select("id fullName avatar").lean();
-      // socket.broadcast.emit('SERVER_RETURN_INFO_USER_ACCEPTED_FRIEND', {
-      //   userId,
-      //   infoUserB: myUserInfo
-      // })
+      //? return về thông tin của B cho A để add vào danh sách bạn bè của A
+      const myUserInfo = await User.findOne({
+        _id: myUserId
+      }).select("id fullName avatar").lean();
+      socket.broadcast.emit('SERVER_RETURN_INFO_USER_ACCEPTED_FRIEND', {
+        userId,
+        infoUserB: myUserInfo
+      })
     });
 
     // ! Nguoi dung xoa ban be

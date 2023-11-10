@@ -77,6 +77,10 @@ module.exports.loginPost = async (req, res) => {
     statusOnline: 'online'
   })
 
+  _io.once('connection', socket => {
+    socket.broadcast.emit('SERVER_RETURN_USER_ONLINE', user.id)
+  })
+
   //! lưu user_id vào cart document
   await Cart.updateOne({
     _id: req.cookies.cartId
@@ -94,6 +98,10 @@ module.exports.logout = async (req, res, next) => {
     _id: res.locals.user.id
   }, {
     statusOnline: 'offline'
+  })
+
+  _io.once('connection', socket => {
+    socket.broadcast.emit('SERVER_RETURN_USER_OFFLINE', res.locals.user.id)
   })
 
   res.redirect('/')
